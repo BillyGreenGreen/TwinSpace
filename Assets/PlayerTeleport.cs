@@ -40,7 +40,7 @@ public class PlayerTeleport : MonoBehaviour
             timerToDamp += Time.deltaTime;
             ps1.Play();
             ps2.Play();
-
+            GameManager.Instance.vigTimer = 0;
             
             if (side == "holy"){
                 //ANIMATION HERE LIKE LAST EPOCH WHEN YOU SWITCH AND CHANGE CHROMATIC ABERRATION QUICK UP AND DOWN
