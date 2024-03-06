@@ -45,16 +45,18 @@ public class PlayerTeleport : MonoBehaviour
             if (side == "holy"){
                 //ANIMATION HERE LIKE LAST EPOCH WHEN YOU SWITCH AND CHANGE CHROMATIC ABERRATION QUICK UP AND DOWN
                 //MAYBE WE DONT NEED TO HAVE THE CAMERA DAMPENING SET TO 0 IF WE HAVE AN ANIMATION TO HIDE IT MOVING
-                cinemachineVirtualCamera.GetCinemachineComponent<CinemachineFramingTransposer>().m_XDamping = 0;
-                cinemachineVirtualCamera.GetCinemachineComponent<CinemachineFramingTransposer>().m_YDamping = 0;
+                //cinemachineVirtualCamera.GetCinemachineComponent<CinemachineFramingTransposer>().m_XDamping = 0;
+                //cinemachineVirtualCamera.GetCinemachineComponent<CinemachineFramingTransposer>().m_YDamping = 0;
                 transform.position = new Vector2(transform.position.x + 80, transform.position.y);
                 side = "void";
+                SoundEffects.Instance.PlaySound("woosh1");
             }
             else{
-                cinemachineVirtualCamera.GetCinemachineComponent<CinemachineFramingTransposer>().m_XDamping = 0;
-                cinemachineVirtualCamera.GetCinemachineComponent<CinemachineFramingTransposer>().m_YDamping = 0;
+                //cinemachineVirtualCamera.GetCinemachineComponent<CinemachineFramingTransposer>().m_XDamping = 0;
+                //cinemachineVirtualCamera.GetCinemachineComponent<CinemachineFramingTransposer>().m_YDamping = 0;
                 transform.position = new Vector2(transform.position.x - 80, transform.position.y);
                 side = "holy";
+                SoundEffects.Instance.PlaySound("woosh2");
             }
             
         }
