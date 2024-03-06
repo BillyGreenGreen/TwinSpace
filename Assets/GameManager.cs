@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour
     private static LensDistortion ld;
     private static Vignette vg;
     public float vigTimer = 0;
-    private float vigTimerDuration = 30;
+    private float vigTimerDuration = 45;
 
     [SerializeField] private TextMeshProUGUI timerText;
     private void Awake() 
