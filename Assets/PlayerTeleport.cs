@@ -38,6 +38,9 @@ public class PlayerTeleport : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.F)){
             timerToDamp += Time.deltaTime;
+            foreach (GameObject go in GameObject.FindGameObjectsWithTag("Orb")){
+                Destroy(go);
+            }
             ps1.Play();
             ps2.Play();
             GameManager.Instance.vigTimer = 0;
@@ -50,6 +53,15 @@ public class PlayerTeleport : MonoBehaviour
                 transform.position = new Vector2(transform.position.x + 80, transform.position.y);
                 side = "void";
                 SoundEffects.Instance.PlaySound("woosh1");
+                if (GameManager.Instance.holyEnemies.Count > 0){
+                    foreach(GameObject go in GameManager.Instance.holyEnemies){
+                        Destroy(go);
+                    }
+                    
+                    GameManager.Instance.holyEnemies.Clear();
+                }
+                GameManager.Instance.shouldSpawnHoly = false;
+                
             }
             else{
                 //cinemachineVirtualCamera.GetCinemachineComponent<CinemachineFramingTransposer>().m_XDamping = 0;
@@ -57,6 +69,13 @@ public class PlayerTeleport : MonoBehaviour
                 transform.position = new Vector2(transform.position.x - 80, transform.position.y);
                 side = "holy";
                 SoundEffects.Instance.PlaySound("woosh2");
+                if (GameManager.Instance.voidEnemies.Count > 0){
+                    foreach(GameObject go in GameManager.Instance.voidEnemies){
+                        Destroy(go);
+                    }
+                    GameManager.Instance.voidEnemies.Clear();
+                }
+                GameManager.Instance.shouldSpawnHoly = true;
             }
             
         }

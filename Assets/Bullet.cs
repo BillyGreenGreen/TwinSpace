@@ -17,8 +17,13 @@ public class Bullet : MonoBehaviour
         rb.velocity = playerVel + new Vector2(direction.x, direction.y).normalized * force;
     }
 
-    private void OnCollisionEnter2D(Collision2D other) {
-        //instantiate particle effect
+    private void OnTriggerEnter2D(Collider2D other) {
+        if (other.name.Contains("Slime")){
+            other.GetComponent<SlimeAI>().slimeHealth -= 1;
+            if (other.GetComponent<SlimeAI>().slimeHealth <= 0){
+                other.GetComponent<SlimeAI>().Die();
+            }
+        }
         Destroy(gameObject);
     }
 }
