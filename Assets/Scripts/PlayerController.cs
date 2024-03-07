@@ -22,28 +22,34 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        movement.x = Input.GetAxisRaw("Horizontal");
-        movement.y = Input.GetAxisRaw("Vertical");
-        if (shouldBeDroppingOrbs && numberOfOrbsLeftToDrop > 0){
-            timer += Time.deltaTime;
-            if (timer >= timeBetweenOrbDrops){
-                //drop orb
-                if (colourOfOrbs == "Void"){
-                    Instantiate(Resources.Load<GameObject>("Prefabs/Orbs/VoidDeposit"), transform.position, Quaternion.identity);
-                    numberOfOrbsLeftToDrop--;
-                    GameManager.Instance.DecreaseOrbCount("Void");
+        if (GameManager.Instance.isGamePlaying){
+            movement.x = Input.GetAxisRaw("Horizontal");
+            movement.y = Input.GetAxisRaw("Vertical");
+            if (shouldBeDroppingOrbs && numberOfOrbsLeftToDrop > 0){
+                timer += Time.deltaTime;
+                if (timer >= timeBetweenOrbDrops){
+                    //drop orb
+                    if (colourOfOrbs == "Void"){
+                        Instantiate(Resources.Load<GameObject>("Prefabs/Orbs/VoidDeposit"), transform.position, Quaternion.identity);
+                        numberOfOrbsLeftToDrop--;
+                        GameManager.Instance.DecreaseOrbCount("Void");
+                    }
+                    else{
+                        Instantiate(Resources.Load<GameObject>("Prefabs/Orbs/HolyDeposit"), transform.position, Quaternion.identity);
+                        numberOfOrbsLeftToDrop--;
+                        GameManager.Instance.DecreaseOrbCount("Holy");
+                    }
+                    timer = 0;
                 }
-                else{
-                    Instantiate(Resources.Load<GameObject>("Prefabs/Orbs/HolyDeposit"), transform.position, Quaternion.identity);
-                    numberOfOrbsLeftToDrop--;
-                    GameManager.Instance.DecreaseOrbCount("Holy");
-                }
-                timer = 0;
+            }
+            else{
+                shouldBeDroppingOrbs = false;
             }
         }
         else{
-            shouldBeDroppingOrbs = false;
+            movement = Vector2.zero;
         }
+        
     }
 
     private void FixedUpdate() {

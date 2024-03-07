@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3635661979379173101}
   - component: {fileID: 7591939706461504707}
   - component: {fileID: -3484315545823628837}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: EnemyBulletHoly
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -148,7 +148,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1910840259291236953}
   - component: {fileID: 1910840259291236952}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Light 2D
   m_TagString: Untagged
   m_Icon: {fileID: 0}

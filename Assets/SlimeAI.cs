@@ -30,6 +30,7 @@ public class SlimeAI : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
         if (GameObject.FindGameObjectWithTag("Player")){
             target = GameObject.FindGameObjectWithTag("Player").transform;
         }
@@ -44,26 +45,40 @@ public class SlimeAI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (shouldMove){
-            if (Vector2.Distance(target.position, transform.position) >= distanceToStop){
-                transform.position = Vector2.MoveTowards(transform.position, target.position, speed * Time.deltaTime);
-            }
-            else{
-                rb.velocity = Vector2.zero;
-            }
-            if (Vector2.Distance(target.position, transform.position) <= distanceToShoot){
-                int rng = Random.Range(0, 100);
-                if (rng <= 65){
-                    ShootOne();
+        if (GameManager.Instance.isGamePlaying){
+            if (shouldMove){
+                if (Vector2.Distance(target.position, transform.position) >= distanceToStop){
+                    transform.position = Vector2.MoveTowards(transform.position, target.position, speed * Time.deltaTime);
+                    Vector2 dir = transform.position - target.position;
+                    if (dir.x > 0){
+                        GetComponent<SpriteRenderer>().flipX = true;
+                    }
+                    else{
+                        GetComponent<SpriteRenderer>().flipX = false;
+                    }
+                    anim.SetBool("isMoving", true);
+                    anim.SetBool("isRangedAttacking", false);
                 }
-                else if(rng > 65 && rng <= 90){
-                    ShootThree();
+                else{
+                    rb.velocity = Vector2.zero;
+                    anim.SetBool("isMoving", false);
                 }
-                else if(rng > 90){
-                    ShootFive();
+                if (Vector2.Distance(target.position, transform.position) <= distanceToShoot){
+                    anim.SetBool("isRangedAttacking", true);
+                    int rng = Random.Range(0, 100);
+                    if (rng <= 65){
+                        ShootOne();
+                    }
+                    else if(rng > 65 && rng <= 90){
+                        ShootThree();
+                    }
+                    else if(rng > 90){
+                        ShootFive();
+                    }
                 }
             }
         }
+        
         
     }
 

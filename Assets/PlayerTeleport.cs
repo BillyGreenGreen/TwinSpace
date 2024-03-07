@@ -13,6 +13,7 @@ public class PlayerTeleport : MonoBehaviour
     public Volume volume;
     private static ChromaticAberration ca;
     private static LensDistortion ld;
+    [SerializeField] private GameObject tpTooltip;
     string side = "holy";
     float timerToDamp = 0;
     float dampDuration = 0.2f;
@@ -37,6 +38,7 @@ public class PlayerTeleport : MonoBehaviour
             }
         }
         if (Input.GetKeyDown(KeyCode.F)){
+            
             timerToDamp += Time.deltaTime;
             foreach (GameObject go in GameObject.FindGameObjectsWithTag("Orb")){
                 Destroy(go);
@@ -61,6 +63,9 @@ public class PlayerTeleport : MonoBehaviour
                     GameManager.Instance.holyEnemies.Clear();
                 }
                 GameManager.Instance.shouldSpawnHoly = false;
+                if (tpTooltip != null){
+                    Destroy(tpTooltip);
+                }
                 
             }
             else{
