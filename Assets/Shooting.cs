@@ -5,7 +5,8 @@ using UnityEngine;
 public class Shooting : MonoBehaviour
 {
     private Vector3 mousePos;
-    [SerializeField] private GameObject bullet;
+    [SerializeField] private GameObject holyBullet;
+    [SerializeField] private GameObject voidBullet;
     [SerializeField] private Transform bulletTransform;
     [SerializeField] private float bulletForce;
     public Rigidbody2D playerRb;
@@ -40,7 +41,13 @@ public class Shooting : MonoBehaviour
             }
             if (Input.GetMouseButton(0) && canFire){
                 canFire = false;
-                Instantiate(bullet, bulletTransform.position, bulletTransform.rotation);
+                if (GameManager.Instance.shouldSpawnHoly){
+                    Instantiate(voidBullet, bulletTransform.position, bulletTransform.rotation);
+                }
+                else{
+                    Instantiate(holyBullet, bulletTransform.position, bulletTransform.rotation);
+                }
+                
             }
         }
         

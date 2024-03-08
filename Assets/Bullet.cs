@@ -7,6 +7,7 @@ public class Bullet : MonoBehaviour
     private Vector3 mousePos;
     private Rigidbody2D rb;
     public float force;
+    public GameObject impactEffect;
     // Start is called before the first frame update
     void Start()
     {
@@ -24,6 +25,13 @@ public class Bullet : MonoBehaviour
                 other.GetComponent<SlimeAI>().Die();
             }
         }
+        if (gameObject.name.Contains("Holy")){
+            impactEffect.GetComponent<SpriteRenderer>().color = new Color(1, 0.8f, 0);
+        }
+        else{
+            impactEffect.GetComponent<SpriteRenderer>().color = new Color(0.23f, 0, 0.71f);
+        }
+        Instantiate(impactEffect, transform.position, transform.rotation);
         Destroy(gameObject);
     }
 }

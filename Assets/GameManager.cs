@@ -123,6 +123,9 @@ public class GameManager : MonoBehaviour
         gameOverScreen.SetActive(true);
         BGM.Stop();
         playerCrosshair.HideCrosshair();
+        foreach (GameObject go in GameObject.FindGameObjectsWithTag("Orb")){
+            Destroy(go);
+        }
     }
 
     private void GameWon(){
