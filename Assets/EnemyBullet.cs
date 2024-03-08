@@ -23,7 +23,7 @@ public class EnemyBullet : MonoBehaviour
         Debug.Log(other.name);
         if (other.name == "Player"){
             //hit player
-            GameManager.Instance.DecreasePlayerHealth(1);
+            GameManager.Instance.DecreasePlayerHealth(4);
         }
         Destroy(gameObject);
     }

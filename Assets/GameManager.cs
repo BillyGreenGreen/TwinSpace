@@ -145,7 +145,16 @@ public class GameManager : MonoBehaviour
                 KillPlayer();
             }
         }
-        
+    }
+
+    public void IncreasePlayerHealth(int healAmount){
+        if (isGamePlaying){
+            playerHealth += healAmount;
+            healthSlider.value = playerHealth;
+            if (playerHealth > healthSlider.maxValue){
+                playerHealth = (int)healthSlider.maxValue;
+            }
+        }
     }
 
     public void ResetGame(){
@@ -176,6 +185,7 @@ public class GameManager : MonoBehaviour
             }
             voidEnemies.Clear();
         }
+        shouldSpawnHoly = true;
         Instantiate(Resources.Load<GameObject>("Prefabs/Countdown"), uiCanvas.transform).SetActive(true);
     }
 

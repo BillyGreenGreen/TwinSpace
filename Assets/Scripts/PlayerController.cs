@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -13,18 +14,29 @@ public class PlayerController : MonoBehaviour
     private int numberOfOrbsToDrop = 0;
     private int numberOfOrbsLeftToDrop = 0;
     private string colourOfOrbs;
+    
+
+    [Header("Dash Settings")]
+    [SerializeField] private Slider dashBar;
+    [SerializeField] float dashSpeed = 10f;
+    [SerializeField] float dashDuration = 1f;
+    [SerializeField] float dashCooldown = 2f;
+    [SerializeField] TrailRenderer trailRenderer;
+    float dashTimer = 0;
+    bool isDashing = false;
+    bool canDash = true;
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        dashBar.maxValue = dashCooldown;
     }
 
     // Update is called once per frame
     void Update()
     {
         if (GameManager.Instance.isGamePlaying){
-            movement.x = Input.GetAxisRaw("Horizontal");
-            movement.y = Input.GetAxisRaw("Vertical");
+            
             if (shouldBeDroppingOrbs && numberOfOrbsLeftToDrop > 0){
                 timer += Time.deltaTime;
                 if (timer >= timeBetweenOrbDrops){
@@ -45,6 +57,25 @@ public class PlayerController : MonoBehaviour
             else{
                 shouldBeDroppingOrbs = false;
             }
+            if (Input.GetKeyDown(KeyCode.Space) && canDash){
+                dashTimer += Time.deltaTime;
+                StartCoroutine(Dash());
+            }
+            if (dashTimer >= dashCooldown){
+                dashTimer = 0;
+            }
+            else if (dashTimer > 0){
+                dashTimer += Time.deltaTime;
+                dashBar.value = dashTimer;
+            }
+            
+            Debug.Log(dashTimer);
+            if (isDashing){
+                return;
+            }
+            movement.x = Input.GetAxisRaw("Horizontal");
+            movement.y = Input.GetAxisRaw("Vertical");
+            
         }
         else{
             movement = Vector2.zero;
@@ -53,8 +84,25 @@ public class PlayerController : MonoBehaviour
     }
 
     private void FixedUpdate() {
+        //rb.AddForce(movement * moveSpeed, ForceMode2D.Impulse);
+        if (isDashing){
+            return;
+        }
         rb.velocity = movement * moveSpeed;
-        //rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
+        
+    }
+
+    private IEnumerator Dash(){
+        canDash = false;
+        isDashing = true;
+        rb.velocity = new Vector2(movement.x * dashSpeed, movement.y * dashSpeed);
+        trailRenderer.emitting = true;
+        yield return new WaitForSeconds(dashDuration);
+        trailRenderer.emitting = false;
+        isDashing = false;
+
+        yield return new WaitForSeconds(dashCooldown);
+        canDash = true;
     }
 
     private void OnTriggerEnter2D(Collider2D other) {

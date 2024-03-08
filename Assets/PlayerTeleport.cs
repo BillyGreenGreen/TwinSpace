@@ -50,7 +50,7 @@ public class PlayerTeleport : MonoBehaviour
                 ps2.Play();
                 GameManager.Instance.vigTimer = 0;
                 
-                if (side == "holy"){
+                if (GameManager.Instance.shouldSpawnHoly){
                     transform.position = new Vector2(transform.position.x + 80, transform.position.y);
                     side = "void";
                     voidVortexAnim.Play("Void_Vortex", 0, 0f);

@@ -35,9 +35,11 @@ public class OrbDeposit : MonoBehaviour
         Debug.Log(other.name);
         if (orbColour == "Holy"){
             GameManager.Instance.IncreaseDepositedOrbCount("Holy");
+            GameManager.Instance.IncreasePlayerHealth(2);
         }
         else{
             GameManager.Instance.IncreaseDepositedOrbCount("Void");
+            GameManager.Instance.IncreasePlayerHealth(2);
         }
         Destroy(gameObject);
     }
