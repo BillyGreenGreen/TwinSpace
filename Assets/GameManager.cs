@@ -11,11 +11,13 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance {get; private set;}
+    public PlayerCrosshair playerCrosshair;
     public Volume volume;
     public Canvas uiCanvas;
     public bool isGamePlaying = false;
     public GameObject gameOverScreen;
     public GameObject gameWonScreen;
+    public GameObject pauseScreen;
     public AudioSource BGM;
     [Header("Post Processing")]
     private static ChromaticAberration ca;
@@ -48,6 +50,7 @@ public class GameManager : MonoBehaviour
     public int numberOfDepositedHolyOrbs;
     public int numberOfDepositedVoidOrbs;
     public int playerHealth;
+    private int numberOfOrbsToCollect = 25;
 
     private void Awake() 
     { 
@@ -69,6 +72,13 @@ public class GameManager : MonoBehaviour
         volume.profile.TryGet(out ca);
         volume.profile.TryGet(out vg);
         playerHealth = (int)healthSlider.maxValue;
+        holyDepositText.text = "0/" + numberOfOrbsToCollect.ToString();
+        voidDepositText.text = "0/" + numberOfOrbsToCollect.ToString();
+
+        if (!PlayerPrefs.HasKey("GamesWon")){
+            PlayerPrefs.SetInt("GamesWon", 0);
+        }
+
     }
 
     // Update is called once per frame
@@ -87,41 +97,63 @@ public class GameManager : MonoBehaviour
             if (vigTimer >= vigTimerDuration){
                 KillPlayer();
             }
-        }   
+            if (Input.GetKeyDown(KeyCode.Escape)){
+                PauseGame();
+            }
+        }
         
+    }
+
+    public void UnpauseGame(){
+        BGM.Play();
+        isGamePlaying = true;
+        pauseScreen.SetActive(false);
+        playerCrosshair.ShowCrosshair();
+    }
+
+    private void PauseGame(){
+        isGamePlaying = false;
+        pauseScreen.SetActive(true);
+        BGM.Pause();
+        playerCrosshair.HideCrosshair();
     }
 
     private void KillPlayer(){
         isGamePlaying = false;
         gameOverScreen.SetActive(true);
         BGM.Stop();
+        playerCrosshair.HideCrosshair();
     }
 
     private void GameWon(){
         isGamePlaying = false;
         gameWonScreen.SetActive(true);
-
+        playerCrosshair.HideCrosshair();
         BGM.Stop();
     }
 
     public void DecreasePlayerHealth(int damage){
-        playerHealth -= damage;
-        healthSlider.value = playerHealth;
-        if (playerHealth <= 0){
-            //lose
-            KillPlayer();
+        if (isGamePlaying){
+            playerHealth -= damage;
+            healthSlider.value = playerHealth;
+            if (playerHealth <= 0){
+                //lose
+                KillPlayer();
+            }
         }
+        
     }
 
     public void ResetGame(){
+        playerCrosshair.ShowCrosshair();
         numberOfHolyOrbs = 0;
         numberOfVoidOrbs = 0;
         holyOrbText.text = numberOfHolyOrbs.ToString();
         voidOrbText.text = numberOfVoidOrbs.ToString();
         numberOfDepositedHolyOrbs = 0;
         numberOfDepositedVoidOrbs = 0;
-        holyDepositText.text = "0/50";
-        voidDepositText.text = "0/50";
+        holyDepositText.text = "0/" + numberOfOrbsToCollect.ToString();
+        voidDepositText.text = "0/" + numberOfOrbsToCollect.ToString();
         playerHealth = (int)healthSlider.maxValue;
         healthSlider.value = playerHealth;
         gameOverScreen.SetActive(false);
@@ -168,25 +200,22 @@ public class GameManager : MonoBehaviour
     public void IncreaseDepositedOrbCount(string colour){
         if (colour == "Holy"){
             numberOfDepositedHolyOrbs++;
-            if (numberOfDepositedHolyOrbs <= 50){
-                holyDepositText.text = numberOfDepositedHolyOrbs.ToString() + "/50";
+            if (numberOfDepositedHolyOrbs <= numberOfOrbsToCollect){
+                holyDepositText.text = numberOfDepositedHolyOrbs.ToString() + "/"+numberOfOrbsToCollect.ToString();
             }
         }
         else{
             numberOfDepositedVoidOrbs++;
-            if (numberOfDepositedVoidOrbs <= 50){
-                voidDepositText.text = numberOfDepositedVoidOrbs.ToString() + "/50";
+            if (numberOfDepositedVoidOrbs <= numberOfOrbsToCollect){
+                voidDepositText.text = numberOfDepositedVoidOrbs.ToString() + "/" + numberOfOrbsToCollect.ToString();
             }
         }
-        if (numberOfDepositedHolyOrbs >= 50 && numberOfDepositedVoidOrbs >= 50){
+        if (numberOfDepositedHolyOrbs >= numberOfOrbsToCollect && numberOfDepositedVoidOrbs >= numberOfOrbsToCollect){
             //win
             if (PlayerPrefs.HasKey("GamesWon")){
                 int num = PlayerPrefs.GetInt("GamesWon");
                 num++;
                 PlayerPrefs.SetInt("GamesWon", num);
-            }
-            else{
-                PlayerPrefs.SetInt("GamesWon", 1);
             }
             GameWon();
             

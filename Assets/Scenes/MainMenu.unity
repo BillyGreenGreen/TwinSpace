@@ -190,8 +190,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281479730
-  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -596,7 +596,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3fbc4bae663e1848ab0904e3dc9dcab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startColour: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  startColour: {r: 1, g: 1, b: 1, a: 1}
   highlightColour: {r: 1, g: 0.81695867, b: 0, a: 1}
   text: {fileID: 2130387708}
 --- !u!114 &1253245479
@@ -978,7 +978,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3fbc4bae663e1848ab0904e3dc9dcab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startColour: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  startColour: {r: 1, g: 1, b: 1, a: 1}
   highlightColour: {r: 1, g: 0.81695867, b: 0, a: 1}
   text: {fileID: 562577327}
 --- !u!114 &1652963396
@@ -1056,7 +1056,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 82aaa9ccdeac2e3438f2aa4943704436, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.48
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -1352,8 +1352,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281479730
-  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:

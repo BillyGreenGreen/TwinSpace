@@ -29,4 +29,8 @@ public class HoverButton : MonoBehaviour
     public void ExitGame(){
         Application.Quit();
     }
+
+    public void ContinueGame(){
+        GameManager.Instance.UnpauseGame();
+    }
 }

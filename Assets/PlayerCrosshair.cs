@@ -18,4 +18,14 @@ public class PlayerCrosshair : MonoBehaviour
     void Update()
     {
     }
+
+    public void ShowCrosshair(){
+        crosshair.SetActive(true);
+        Cursor.visible = false;
+    }
+
+    public void HideCrosshair(){
+        Cursor.visible = true;
+        crosshair.SetActive(false);
+    }
 }
