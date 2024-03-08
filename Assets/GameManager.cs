@@ -68,6 +68,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log("GM START");
         volume.profile.TryGet(out ld);
         volume.profile.TryGet(out ca);
         volume.profile.TryGet(out vg);

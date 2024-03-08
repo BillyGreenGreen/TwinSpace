@@ -10,6 +10,12 @@ public class PlayerCrosshair : MonoBehaviour
     void Start()
     {
         crosshair = Instantiate(Resources.Load<GameObject>("Prefabs/Crosshairs/Crosshair"));
+        if (!PlayerPrefs.HasKey("CrosshairR")){
+            crosshairColour = new Color(1, 0, 0);
+        }
+        else{
+            crosshairColour = new Color(PlayerPrefs.GetFloat("CrosshairR"), PlayerPrefs.GetFloat("CrosshairG"), PlayerPrefs.GetFloat("CrosshairB"));
+        }
         crosshair.GetComponent<SpriteRenderer>().color = crosshairColour;
         Cursor.visible = false;
     }
