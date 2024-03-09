@@ -20,7 +20,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Slider dashBar;
     [SerializeField] float dashSpeed = 10f;
     [SerializeField] float dashDuration = 1f;
-    [SerializeField] float dashCooldown = 2f;
+    [SerializeField] public float dashCooldown = 2f;
     [SerializeField] TrailRenderer trailRenderer;
     float dashTimer = 0;
     public bool isDashing = false;
@@ -68,8 +68,6 @@ public class PlayerController : MonoBehaviour
                 dashTimer += Time.deltaTime;
                 dashBar.value = dashTimer;
             }
-            
-            Debug.Log(dashTimer);
             if (isDashing){
                 return;
             }

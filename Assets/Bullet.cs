@@ -15,7 +15,10 @@ public class Bullet : MonoBehaviour
         mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector3 direction = mousePos - transform.position;
         Vector2 playerVel = GameObject.Find("Player").GetComponent<Rigidbody2D>().velocity;
-        rb.velocity = playerVel + new Vector2(direction.x, direction.y).normalized * force;
+        force = GameManager.Instance.GetBulletSpeed();
+        rb.velocity = playerVel + new Vector2(transform.up.x, transform.up.y) * force;
+        //rb.velocity = playerVel + new Vector2(direction.x, direction.y).normalized * force;
+        //rb.velocity = new Vector2(direction.x, direction.y).normalized * force;
     }
 
     private void OnTriggerEnter2D(Collider2D other) {

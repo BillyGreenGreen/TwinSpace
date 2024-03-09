@@ -26,7 +26,7 @@ public class Orb : MonoBehaviour
     private void Update() {
         if (target != null){
             target = GameObject.Find("Player").transform;
-            transform.position = Vector2.MoveTowards(transform.position, target.position, 6f * Time.deltaTime);
+            transform.position = Vector2.MoveTowards(transform.position, target.position, 10f * Time.deltaTime);
         }
     }
 }

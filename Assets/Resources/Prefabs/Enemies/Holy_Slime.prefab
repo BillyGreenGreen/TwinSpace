@@ -161,7 +161,7 @@ MonoBehaviour:
   distanceToShoot: 5
   distanceToStop: 3
   anim: {fileID: 0}
-  fireRate: 0.5
+  fireRate: 1
   projectilePrefab: {fileID: 1910840257414565879, guid: f8a5484814ec7b24ebb966ee01ddfab1, type: 3}
   firingPointParent: {fileID: 4150268219925439185}
   firingPoint: {fileID: 4150268218564567197}

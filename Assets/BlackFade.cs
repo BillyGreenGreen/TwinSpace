@@ -26,7 +26,6 @@ public class BlackFade : MonoBehaviour
     void Update()
     {
         timer += Time.deltaTime;
-        Debug.Log(timer);
         if (timer > 0.5f){
             fadeTimer += Time.deltaTime;
             float alphaThing = Mathf.Lerp(1f, 0, fadeTimer/4.5f);

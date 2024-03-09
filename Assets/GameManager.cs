@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance {get; private set;}
     public PlayerCrosshair playerCrosshair;
     public PlayerController playerController;
+    public PowerUps powerUps;
     public Volume volume;
     public Canvas uiCanvas;
     public bool isGamePlaying = false;
@@ -43,6 +44,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI voidDepositText;
     [SerializeField] private GameObject tpTooltip;
     [SerializeField] private Slider healthSlider;
+    [SerializeField] private GameObject shieldEffect;
+    [SerializeField] private GameObject powerUpParent;
     
 
     [Header("Player Stats")]
@@ -51,7 +54,12 @@ public class GameManager : MonoBehaviour
     public int numberOfDepositedHolyOrbs;
     public int numberOfDepositedVoidOrbs;
     public int playerHealth;
-    private int numberOfOrbsToCollect = 25;
+    private int numberOfOrbsToCollect = 2;
+    private float bulletSpeed = 40;
+    private bool invincible = false;
+    private float invincibleTimer;
+    private float invincibleTimerDuration;
+    private int stage = 1;
 
     private void Awake() 
     { 
@@ -80,6 +88,12 @@ public class GameManager : MonoBehaviour
         if (!PlayerPrefs.HasKey("GamesWon")){
             PlayerPrefs.SetInt("GamesWon", 0);
         }
+        if (!PlayerPrefs.HasKey("SavedStage")){
+            PlayerPrefs.SetInt("SavedStage", 1);
+            stage = PlayerPrefs.GetInt("SavedStage");
+        }
+
+        
 
     }
 
@@ -96,14 +110,37 @@ public class GameManager : MonoBehaviour
                 }
                 timerText.text = timeS.ToString(@"m\:ss");
             }
+            if (invincible){
+                invincibleTimer += Time.deltaTime;
+                if (invincibleTimer <= invincibleTimerDuration){
+                    shieldEffect.SetActive(true);
+                }
+                else{
+                    shieldEffect.SetActive(false);
+                    invincible = false;
+                    invincibleTimer = 0;
+                }
+            }
             if (vigTimer >= vigTimerDuration){
                 KillPlayer();
             }
             if (Input.GetKeyDown(KeyCode.Escape)){
                 PauseGame();
             }
+
         }
         
+    }
+    public void EnableShield(int duration){
+        invincibleTimerDuration = duration;
+    }
+
+    public float GetBulletSpeed(){
+        return bulletSpeed;
+    }
+
+    public void SetBulletSpeed(float speed){
+        bulletSpeed = speed;
     }
 
     public void UnpauseGame(){
@@ -133,14 +170,44 @@ public class GameManager : MonoBehaviour
     private void GameWon(){
         isGamePlaying = false;
         gameWonScreen.SetActive(true);
+        gameWonScreen.transform.Find("Title").GetComponent<TextMeshProUGUI>().text = "STAGE " + PlayerPrefs.GetInt("StageSaved").ToString() + " COMPLETE";
+        stage++;
+        PlayerPrefs.SetInt("StageSaved", stage);
+        Debug.Log(powerUps.GeneratePowerUpsToBuy().Count);
+        foreach (string s in powerUps.GeneratePowerUpsToBuy()){
+            string nameOfPowerUp = s.Split(" ")[0];
+            string levelOfPowerUp = s.Split(" ")[1];
+            //Debug.Log(nameOfPowerUp + levelOfPowerUp);
+            GameObject go = Instantiate(Resources.Load<GameObject>("Prefabs/PowerUpTile"), powerUpParent.transform);
+            go.GetComponent<Image>().sprite = Resources.Load<Sprite>("PowerUps/" + nameOfPowerUp);
+            if (nameOfPowerUp == "fasterFireRate"){
+                nameOfPowerUp = "faster fire rate";
+            }
+            else if (nameOfPowerUp == "fasterProj"){
+                nameOfPowerUp = "faster projectiles";
+            }
+            else if (nameOfPowerUp == "dash"){
+                nameOfPowerUp = "faster dash cooldown";
+            }
+            go.transform.Find("NameOfPowerUp").GetComponent<TextMeshProUGUI>().text = nameOfPowerUp;
+            go.transform.Find("LevelOfPowerUp").GetComponent<TextMeshProUGUI>().text = "Level " + levelOfPowerUp;
+            
+        }
         playerCrosshair.HideCrosshair();
+        
         BGM.Stop();
     }
 
     public void DecreasePlayerHealth(int damage){
         if (isGamePlaying && !playerController.isDashing){
-            playerHealth -= damage;
-            healthSlider.value = playerHealth;
+            if (!invincible){
+                playerHealth -= damage;
+                healthSlider.value = playerHealth;
+            }
+            
+            if ((playerHealth >= 28 && playerHealth <= 32 || playerHealth >= 58 && playerHealth <= 62 || playerHealth >= 88 && playerHealth <= 92) && !invincible){
+                invincible = true;
+            }
             if (playerHealth <= 0){
                 //lose
                 KillPlayer();
@@ -166,6 +233,9 @@ public class GameManager : MonoBehaviour
         voidOrbText.text = numberOfVoidOrbs.ToString();
         numberOfDepositedHolyOrbs = 0;
         numberOfDepositedVoidOrbs = 0;
+        foreach (GameObject go in GameObject.FindGameObjectsWithTag("PowerUpTile")){
+            Destroy(go);
+        }
         holyDepositText.text = "0/" + numberOfOrbsToCollect.ToString();
         voidDepositText.text = "0/" + numberOfOrbsToCollect.ToString();
         playerHealth = (int)healthSlider.maxValue;
@@ -225,7 +295,7 @@ public class GameManager : MonoBehaviour
                 voidDepositText.text = numberOfDepositedVoidOrbs.ToString() + "/" + numberOfOrbsToCollect.ToString();
             }
         }
-        if (numberOfDepositedHolyOrbs >= numberOfOrbsToCollect && numberOfDepositedVoidOrbs >= numberOfOrbsToCollect){
+        if (numberOfDepositedHolyOrbs >= numberOfOrbsToCollect && numberOfDepositedVoidOrbs >= numberOfOrbsToCollect && !gameWonScreen.activeSelf){
             //win
             if (PlayerPrefs.HasKey("GamesWon")){
                 int num = PlayerPrefs.GetInt("GamesWon");

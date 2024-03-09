@@ -8,6 +8,7 @@ TagManager:
   - Orb
   - HolyBlackHole
   - VoidBlackHole
+  - PowerUpTile
   layers:
   - Default
   - TransparentFX
