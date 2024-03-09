@@ -23,7 +23,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float dashCooldown = 2f;
     [SerializeField] TrailRenderer trailRenderer;
     float dashTimer = 0;
-    bool isDashing = false;
+    public bool isDashing = false;
     bool canDash = true;
     // Start is called before the first frame update
     void Start()

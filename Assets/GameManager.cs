@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance {get; private set;}
     public PlayerCrosshair playerCrosshair;
+    public PlayerController playerController;
     public Volume volume;
     public Canvas uiCanvas;
     public bool isGamePlaying = false;
@@ -137,7 +138,7 @@ public class GameManager : MonoBehaviour
     }
 
     public void DecreasePlayerHealth(int damage){
-        if (isGamePlaying){
+        if (isGamePlaying && !playerController.isDashing){
             playerHealth -= damage;
             healthSlider.value = playerHealth;
             if (playerHealth <= 0){
