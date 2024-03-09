@@ -54,7 +54,7 @@ public class GameManager : MonoBehaviour
     public int numberOfDepositedHolyOrbs;
     public int numberOfDepositedVoidOrbs;
     public int playerHealth;
-    private int numberOfOrbsToCollect = 2;
+    private int numberOfOrbsToCollect = 15;
     private float bulletSpeed = 40;
     private bool invincible = false;
     private float invincibleTimer;
@@ -173,7 +173,7 @@ public class GameManager : MonoBehaviour
         gameWonScreen.transform.Find("Title").GetComponent<TextMeshProUGUI>().text = "STAGE " + PlayerPrefs.GetInt("StageSaved").ToString() + " COMPLETE";
         stage++;
         PlayerPrefs.SetInt("StageSaved", stage);
-        Debug.Log(powerUps.GeneratePowerUpsToBuy().Count);
+        //Debug.Log(powerUps.GeneratePowerUpsToBuy().Count);
         foreach (string s in powerUps.GeneratePowerUpsToBuy()){
             string nameOfPowerUp = s.Split(" ")[0];
             string levelOfPowerUp = s.Split(" ")[1];
@@ -273,12 +273,23 @@ public class GameManager : MonoBehaviour
 
     public void DecreaseOrbCount(string colour){
         if (colour == "Holy"){
-            numberOfHolyOrbs--;
-            holyOrbText.text = numberOfHolyOrbs.ToString();
+            if (numberOfHolyOrbs - 1 >= 0){
+                numberOfHolyOrbs--;
+                holyOrbText.text = numberOfHolyOrbs.ToString();
+            }
+            if (numberOfHolyOrbs < 0){
+                numberOfHolyOrbs = 0;
+            }
+            
         }
         else{
-            numberOfVoidOrbs--;
-            voidOrbText.text = numberOfVoidOrbs.ToString();
+            if (numberOfVoidOrbs - 1 >= 0){
+                numberOfVoidOrbs--;
+                voidOrbText.text = numberOfVoidOrbs.ToString();
+            }
+            if (numberOfVoidOrbs < 0){
+                numberOfVoidOrbs = 0;
+            }
         }
     }
 

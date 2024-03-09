@@ -12,6 +12,7 @@ public class HoverButton : MonoBehaviour
 
     public GameObject settingsCanvas;
     public GameObject mainMenuCanvas;
+    public GameObject patchNotes;
     
     public void Hovering(){
         text.color = highlightColour;
@@ -45,6 +46,19 @@ public class HoverButton : MonoBehaviour
     public void ShowSettingsCanvas(){
         settingsCanvas.SetActive(true);
         mainMenuCanvas.SetActive(false);
+        
+    }
+
+    public void PatchNotes(){
+        TextMeshProUGUI buttonText = transform.Find("ShowPatchNotesText").GetComponent<TextMeshProUGUI>();
+        if (buttonText.text == "Show Patch Notes"){
+            patchNotes.SetActive(true);
+            buttonText.text = "Hide Patch Notes";
+        }
+        else{
+            patchNotes.SetActive(false);
+            buttonText.text = "Show Patch Notes";
+        }
         
     }
 }

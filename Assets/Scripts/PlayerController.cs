@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour
     
 
     [Header("Dash Settings")]
-    [SerializeField] private Slider dashBar;
+    [SerializeField] public Slider dashBar;
     [SerializeField] float dashSpeed = 10f;
     [SerializeField] float dashDuration = 1f;
     [SerializeField] public float dashCooldown = 2f;

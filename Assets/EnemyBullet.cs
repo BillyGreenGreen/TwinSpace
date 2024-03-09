@@ -20,7 +20,7 @@ public class EnemyBullet : MonoBehaviour
     }
 
     private void OnTriggerEnter2D(Collider2D other) {  
-        Debug.Log(other.name);
+        //Debug.Log(other.name);
         if (other.name == "Player"){
             //hit player
             GameManager.Instance.DecreasePlayerHealth(4);

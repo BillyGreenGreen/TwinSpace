@@ -74,6 +74,7 @@ public class Shooting : MonoBehaviour
                 pulseTimer += Time.deltaTime;
                 if (pulseTimer >= 1){
                     float randomNum = Random.Range(0f, 100f);
+                    Debug.Log(randomNum);
                     if (powerUps.AOEPulseUpgradeLevel == 1 && randomNum < 5f){
                         if (GameManager.Instance.shouldSpawnHoly){
                             ShootAOEPulse("Void");
@@ -81,6 +82,7 @@ public class Shooting : MonoBehaviour
                         else{
                             ShootAOEPulse("Holy");
                         }
+                        
                     }
                     else if (powerUps.AOEPulseUpgradeLevel == 2 && randomNum < 10f){
                         if (GameManager.Instance.shouldSpawnHoly){
@@ -98,6 +100,7 @@ public class Shooting : MonoBehaviour
                             ShootAOEPulse("Holy");
                         }
                     }
+                    pulseTimer = 0;
                 }
             }
 

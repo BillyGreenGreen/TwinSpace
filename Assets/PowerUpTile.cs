@@ -13,7 +13,7 @@ public class PowerUpTile : MonoBehaviour
         powerUps = GameObject.Find("Player").GetComponent<PowerUps>();
     }
     public void PickPowerUp(){
-        Debug.Log(nameOfPowerUp.text);
+        //Debug.Log(nameOfPowerUp.text);
         if (nameOfPowerUp.text == "shield"){
             powerUps.ShieldPowerUp(true);
             powerUps.UpgradeShieldPowerUp();

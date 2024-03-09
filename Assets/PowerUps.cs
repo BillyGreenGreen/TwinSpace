@@ -128,10 +128,12 @@ public class PowerUps : MonoBehaviour
             else if (fasterDashCooldownUpgradeLevel == 2){
                 playerController.dashCooldown = 0.5f;
             }
+            playerController.dashBar.maxValue = playerController.dashCooldown;
         }
         else{
             fasterDashCooldownUpgradeLevel = 1;
             playerController.dashCooldown = 2f;
+            playerController.dashBar.maxValue = playerController.dashCooldown;
         }
     }
 

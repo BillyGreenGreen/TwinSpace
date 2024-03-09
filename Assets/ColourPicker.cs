@@ -30,7 +30,7 @@ public class ColourPicker : MonoBehaviour
         int localPosX = (int)(globalPosX * (refSprite.width / texture.rect.width));
         int localPosY = (int)(globalPosY * (refSprite.height / texture.rect.height));
 
-        Debug.Log(localPosX + " : " + localPosY);
+        //Debug.Log(localPosX + " : " + localPosY);
 
         Color c = refSprite.GetPixel(localPosX, localPosY);
         SetActualColour(c);
