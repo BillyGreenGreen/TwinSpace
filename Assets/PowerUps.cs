@@ -9,7 +9,7 @@ public class PowerUps : MonoBehaviour
     [SerializeField] private Shooting shooting;
     private int shieldUpgradeLevel = 1;
     private int shotgunUpgradeLevel = 1;
-    private int AOEPulseUpgradeLevel = 1;
+    [HideInInspector] public int AOEPulseUpgradeLevel = 1;
     private int fasterProjUpgradeLevel = 1;
     private int fasterFireRateUpgradeLevel = 1;
     private int fasterDashCooldownUpgradeLevel = 1;
