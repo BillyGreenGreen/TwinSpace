@@ -8,6 +8,7 @@ using UnityEngine.Rendering;
 public class PlayerTeleport : MonoBehaviour
 {
     public CinemachineVirtualCamera cinemachineVirtualCamera;
+    [SerializeField] private TrailRenderer tr;
     public ParticleSystem ps1;
     public ParticleSystem ps2;
     public Volume volume;
@@ -16,7 +17,6 @@ public class PlayerTeleport : MonoBehaviour
     public Animator holyVortexAnim;
     public Animator voidVortexAnim;
     [SerializeField] private GameObject tpTooltip;
-    string side = "holy";
     float timerToDamp = 0;
     float dampDuration = 0.2f;
     private void Start() {
@@ -42,6 +42,9 @@ public class PlayerTeleport : MonoBehaviour
         }
         if (GameManager.Instance.isGamePlaying){
             if (Input.GetKeyDown(KeyCode.F)){
+                if (tr.emitting){
+                    tr.emitting = false;
+                }
                 timerToDamp += Time.deltaTime;
                 foreach (GameObject go in GameObject.FindGameObjectsWithTag("Orb")){
                     Destroy(go);
@@ -52,7 +55,6 @@ public class PlayerTeleport : MonoBehaviour
                 
                 if (GameManager.Instance.shouldSpawnHoly){
                     transform.position = new Vector2(transform.position.x + 80, transform.position.y);
-                    side = "void";
                     voidVortexAnim.Play("Void_Vortex", 0, 0f);
                     SoundEffects.Instance.PlaySound("woosh1");
                     if (GameManager.Instance.holyEnemies.Count > 0){
@@ -68,7 +70,6 @@ public class PlayerTeleport : MonoBehaviour
                 }
                 else{
                     transform.position = new Vector2(transform.position.x - 80, transform.position.y);
-                    side = "holy";
                     holyVortexAnim.Play("Holy_Vortex", 0, 0f);
                     SoundEffects.Instance.PlaySound("woosh2");
                     if (GameManager.Instance.voidEnemies.Count > 0){

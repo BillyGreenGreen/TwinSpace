@@ -22,7 +22,7 @@ public class Bullet : MonoBehaviour
     }
 
     private void OnTriggerEnter2D(Collider2D other) {
-        if (other.name.Contains("Slime")){
+        if (other.name.Contains("Slime") && !other.name.Contains("Big")){
             other.GetComponent<SlimeAI>().slimeHealth -= 1;
             if (other.GetComponent<SlimeAI>().slimeHealth <= 0){
                 other.GetComponent<SlimeAI>().Die();

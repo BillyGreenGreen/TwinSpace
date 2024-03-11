@@ -25,6 +25,7 @@ public class EnemyBullet : MonoBehaviour
             //hit player
             GameManager.Instance.DecreasePlayerHealth(4);
         }
+        if (other.name.Contains("Slime")) return;
         Destroy(gameObject);
     }
 

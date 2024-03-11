@@ -24,13 +24,13 @@ public class PowerUps : MonoBehaviour
         //logic to pick which ones
         powerUpsToBuy.Clear();
         List<string> availablePowerUps = new List<string>();
-        if (shieldUpgradeLevel < 3){
+        if (shieldUpgradeLevel <= 3){
             availablePowerUps.Add("shield " + shieldUpgradeLevel.ToString());
         }
-        if (shotgunUpgradeLevel < 3){
+        if (shotgunUpgradeLevel <= 2){
             availablePowerUps.Add("shotgun " + shotgunUpgradeLevel.ToString());
         }
-        if (AOEPulseUpgradeLevel < 3){
+        if (AOEPulseUpgradeLevel <= 3){
             availablePowerUps.Add("pulse " + AOEPulseUpgradeLevel.ToString());
         }
         if (fasterProjUpgradeLevel < 2){
@@ -39,7 +39,7 @@ public class PowerUps : MonoBehaviour
         if (fasterFireRateUpgradeLevel < 2){
             availablePowerUps.Add("fasterFireRate " + fasterFireRateUpgradeLevel.ToString());
         }
-        if (fasterDashCooldownUpgradeLevel < 2){
+        if (fasterDashCooldownUpgradeLevel <= 2){
             availablePowerUps.Add("dash " + fasterDashCooldownUpgradeLevel.ToString());
         }
         ShuffleThing.Shuffle(availablePowerUps);
@@ -57,6 +57,15 @@ public class PowerUps : MonoBehaviour
         return powerUpsToBuy;
     }
 
+    public void ResetPowerUps(){
+        ShieldPowerUp(false);
+        ShotgunPowerUp(false);
+        AOEPulsePowerUp(false);
+        FasterDashCooldown(false);
+        FasterFireRatePowerUp(false);
+        FasterProjectilesPowerUp(false);
+    }
+
     public void ShieldPowerUp(bool enable){
         //25/50/75% health add a shield for X (2/4/8) amount of time
         if (enable){
@@ -72,6 +81,7 @@ public class PowerUps : MonoBehaviour
         }
         else{ //reset
             shieldUpgradeLevel = 1;
+            GameManager.Instance.DisableShield();
         }
     }
 
@@ -98,6 +108,7 @@ public class PowerUps : MonoBehaviour
         }
         else{ //reset
             shooting.canPulse = false;
+            AOEPulseUpgradeLevel = 1;
         }
     }
 
@@ -108,6 +119,7 @@ public class PowerUps : MonoBehaviour
         }
         else{
             GameManager.Instance.SetBulletSpeed(20);
+            fasterProjUpgradeLevel = 1;
         }
     }
 
@@ -117,6 +129,7 @@ public class PowerUps : MonoBehaviour
         }
         else{
             shooting.timeBetweenFiring = 0.3f;
+            fasterFireRateUpgradeLevel = 1;
         }
     }
 
@@ -138,25 +151,25 @@ public class PowerUps : MonoBehaviour
     }
 
     public void UpgradeShieldPowerUp(){
-        if (shieldUpgradeLevel < 3){
+        if (shieldUpgradeLevel <= 3){
             shieldUpgradeLevel++;
         }
     }
     
     public void UpgradeShotgunPowerUp(){
-        if (shotgunUpgradeLevel < 3){
+        if (shotgunUpgradeLevel <= 3){
             shotgunUpgradeLevel++;
         }
     }
     
     public void UpgradeAOEPowerUp(){
-        if (AOEPulseUpgradeLevel < 3){
+        if (AOEPulseUpgradeLevel <= 3){
             AOEPulseUpgradeLevel++;
         }
     }
 
     public void UpgradeDashCooldownPowerUp(){
-        if (fasterDashCooldownUpgradeLevel < 2){
+        if (fasterDashCooldownUpgradeLevel <= 2){
             fasterDashCooldownUpgradeLevel++;
         }
     }

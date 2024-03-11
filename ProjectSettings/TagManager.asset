@@ -9,6 +9,7 @@ TagManager:
   - HolyBlackHole
   - VoidBlackHole
   - PowerUpTile
+  - PowerUpTooltip
   layers:
   - Default
   - TransparentFX
@@ -48,4 +49,7 @@ TagManager:
     locked: 0
   - name: Bullet
     uniqueID: 2727761197
+    locked: 0
+  - name: CameraSortingLayer
+    uniqueID: 952719589
     locked: 0

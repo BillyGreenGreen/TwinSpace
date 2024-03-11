@@ -32,7 +32,7 @@ public class OrbDeposit : MonoBehaviour
     }
 
     private void OnTriggerEnter2D(Collider2D other) {
-        Debug.Log(other.name);
+        //Debug.Log(other.name);
         if (orbColour == "Holy"){
             GameManager.Instance.IncreaseDepositedOrbCount("Holy");
             GameManager.Instance.IncreasePlayerHealth(2);

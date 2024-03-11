@@ -74,7 +74,7 @@ public class Shooting : MonoBehaviour
                 pulseTimer += Time.deltaTime;
                 if (pulseTimer >= 1){
                     float randomNum = Random.Range(0f, 100f);
-                    Debug.Log(randomNum);
+                    //Debug.Log(randomNum);
                     if (powerUps.AOEPulseUpgradeLevel == 1 && randomNum < 5f){
                         if (GameManager.Instance.shouldSpawnHoly){
                             ShootAOEPulse("Void");
@@ -189,6 +189,7 @@ public class Shooting : MonoBehaviour
             for (int i = 0; i < 12; i++){
                 var shotRotation = transform.rotation;
                 shotRotation *= Quaternion.Euler(0,0,angle);
+                Debug.Log(transform.rotation);
                 Instantiate(holyBullet, bulletTransform.position, shotRotation);
                 angle -= 30f;
             }

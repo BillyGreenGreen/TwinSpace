@@ -5,8 +5,9 @@ using UnityEngine;
 public class SlimeAI : MonoBehaviour
 {
     public int slimeHealth;
+    public int randomMaxHealth = 4;
     private GameObject playerPosition;
-    [SerializeField] private float speed;
+    public float speed;
     private string gameObjectName;
     private bool shouldMove = true;
 
@@ -34,7 +35,7 @@ public class SlimeAI : MonoBehaviour
         if (GameObject.FindGameObjectWithTag("Player")){
             target = GameObject.FindGameObjectWithTag("Player").transform;
         }
-        int randomHealth = Random.Range(1, 5);
+        int randomHealth = Random.Range(1, randomMaxHealth);
         slimeHealth = randomHealth;
         gameObjectName = gameObject.name;
     }
@@ -126,7 +127,7 @@ public class SlimeAI : MonoBehaviour
                 var shotRotation = firingPointParent.rotation;
                 shotRotation *= Quaternion.Euler(0,0,angle);
                 Instantiate(projectilePrefab, firingPoint.position, shotRotation);
-                angle -= 30f;
+                angle -= 15f;
             }
             
             timeToFire = fireRate;

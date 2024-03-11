@@ -61,7 +61,7 @@ MonoBehaviour:
   m_NormalMapDistance: 3
   m_NormalMapQuality: 2
   m_UseNormalMap: 0
-  m_ShadowIntensityEnabled: 0
+  m_ShadowIntensityEnabled: 1
   m_ShadowIntensity: 0.75
   m_ShadowVolumeIntensityEnabled: 0
   m_ShadowVolumeIntensity: 0.75
@@ -125,6 +125,7 @@ GameObject:
   - component: {fileID: 5404647179896092563}
   - component: {fileID: 5404647179896092562}
   - component: {fileID: 5404647179896092565}
+  - component: {fileID: 1234227399298549180}
   m_Layer: 0
   m_Name: Void_Slime
   m_TagString: Untagged
@@ -235,6 +236,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slimeHealth: 0
+  randomMaxHealth: 4
   speed: 4
   target: {fileID: 0}
   rotateSpeed: 1
@@ -292,6 +294,45 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.5179224, y: 0.4053793}
   m_EdgeRadius: 0
+--- !u!114 &1234227399298549180
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5404647179896092575}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7db70e0ea77f5ac47a8f4565a9406397, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ShadowGroup: 0
+  m_ComponentVersion: 1
+  m_HasRenderer: 1
+  m_UseRendererSilhouette: 1
+  m_CastsShadows: 1
+  m_SelfShadows: 0
+  m_ApplyToSortingLayers: 000000002d5596a2e558c938
+  m_ShapePath:
+  - {x: -0.16720963, y: 0.18435955, z: 0}
+  - {x: -0.12685776, y: 0.2566824, z: 0}
+  - {x: -0.058959007, y: 0.31658268, z: 0}
+  - {x: 0.018352509, y: 0.34037113, z: 0}
+  - {x: 0.0837698, y: 0.33442402, z: 0}
+  - {x: 0.16405582, y: 0.3150959, z: 0}
+  - {x: 0.2443409, y: 0.2437315, z: 0}
+  - {x: 0.2772293, y: 0.1708746, z: 0}
+  - {x: 0.28020382, y: 0.050549507, z: 0}
+  - {x: 0.26218128, y: 0.023690224, z: 0}
+  - {x: -0.16005993, y: 0.020716667, z: 0}
+  - {x: -0.17938805, y: 0.038558006, z: 0}
+  - {x: -0.1927681, y: 0.105462074, z: 0}
+  m_ShapePathHash: 2055270127
+  m_Mesh: {fileID: 0}
+  m_InstanceId: 71156
+  m_LocalBounds:
+    m_Center: {x: 0.04371786, y: 0.1805439, z: 0}
+    m_Extent: {x: 0.23648596, y: 0.15982723, z: 0}
 --- !u!1 &5404647179935966237
 GameObject:
   m_ObjectHideFlags: 0
