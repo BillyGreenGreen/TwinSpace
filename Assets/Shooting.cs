@@ -16,7 +16,9 @@ public class Shooting : MonoBehaviour
     public float timeBetweenFiring;
     public int amountOfBulletsToFire;
     public bool canPulse = false;
+    public float pulseTime;
     float pulseTimer = 0;
+    float shakeIntensity = 2, duration = 0.2f;
     // Start is called before the first frame update
     void Start()
     {
@@ -55,6 +57,9 @@ public class Shooting : MonoBehaviour
                     else if (amountOfBulletsToFire == 5){
                         ShootFive("Void");
                     }
+                    else if (amountOfBulletsToFire == 7){
+                        ShootSeven("Void");
+                    }
                 }
                 else{
                     if (amountOfBulletsToFire == 1){
@@ -66,15 +71,17 @@ public class Shooting : MonoBehaviour
                     else if (amountOfBulletsToFire == 5){
                         ShootFive("Holy");
                     }
+                    else if (amountOfBulletsToFire == 7){
+                        ShootSeven("Holy");
+                    }
                     
                 }
                 
             }
             if (canPulse){
                 pulseTimer += Time.deltaTime;
-                if (pulseTimer >= 1){
+                if (pulseTimer >= pulseTime){
                     float randomNum = Random.Range(0f, 100f);
-                    //Debug.Log(randomNum);
                     if (powerUps.AOEPulseUpgradeLevel == 1 && randomNum < 5f){
                         if (GameManager.Instance.shouldSpawnHoly){
                             ShootAOEPulse("Void");
@@ -82,7 +89,6 @@ public class Shooting : MonoBehaviour
                         else{
                             ShootAOEPulse("Holy");
                         }
-                        
                     }
                     else if (powerUps.AOEPulseUpgradeLevel == 2 && randomNum < 10f){
                         if (GameManager.Instance.shouldSpawnHoly){
@@ -92,7 +98,47 @@ public class Shooting : MonoBehaviour
                             ShootAOEPulse("Holy");
                         }
                     }
-                    else if (powerUps.AOEPulseUpgradeLevel == 3 && randomNum < 20f){
+                    else if (powerUps.AOEPulseUpgradeLevel == 3 && randomNum < 10f){
+                        if (GameManager.Instance.shouldSpawnHoly){
+                            ShootAOEPulse("Void");
+                        }
+                        else{
+                            ShootAOEPulse("Holy");
+                        }
+                    }
+                    else if (powerUps.AOEPulseUpgradeLevel == 4 && randomNum < 15f){
+                        if (GameManager.Instance.shouldSpawnHoly){
+                            ShootAOEPulse("Void");
+                        }
+                        else{
+                            ShootAOEPulse("Holy");
+                        }
+                    }
+                    else if (powerUps.AOEPulseUpgradeLevel == 5 && randomNum < 15f){
+                        if (GameManager.Instance.shouldSpawnHoly){
+                            ShootAOEPulse("Void");
+                        }
+                        else{
+                            ShootAOEPulse("Holy");
+                        }
+                    }
+                    else if (powerUps.AOEPulseUpgradeLevel == 6 && randomNum < 20f){
+                        if (GameManager.Instance.shouldSpawnHoly){
+                            ShootAOEPulse("Void");
+                        }
+                        else{
+                            ShootAOEPulse("Holy");
+                        }
+                    }
+                    else if (powerUps.AOEPulseUpgradeLevel == 7 && randomNum < 25f){
+                        if (GameManager.Instance.shouldSpawnHoly){
+                            ShootAOEPulse("Void");
+                        }
+                        else{
+                            ShootAOEPulse("Holy");
+                        }
+                    }
+                    else if (powerUps.AOEPulseUpgradeLevel == 8 && randomNum < 30f){
                         if (GameManager.Instance.shouldSpawnHoly){
                             ShootAOEPulse("Void");
                         }
@@ -122,6 +168,34 @@ public class Shooting : MonoBehaviour
             transform.rotation = Quaternion.Euler(0, 0, rotZ);
 
             Instantiate(voidBullet, bulletTransform.position, bulletTransform.rotation);
+        }
+    }
+
+    private void ShootTwo(string colour){
+        if (colour == "Holy"){
+            Vector3 rotation = mousePos - transform.position;
+            float rotZ = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg - 90f;
+            transform.rotation = Quaternion.Euler(0, 0, rotZ);
+            float angle = 5f;
+            for (int i = 0; i < 2; i++){
+                var shotRotation = transform.rotation;
+                shotRotation *= Quaternion.Euler(0,0,angle);
+                Instantiate(holyBullet, bulletTransform.position, shotRotation);
+                angle -= 10f;
+            }
+        }
+        else{
+            Vector3 rotation = mousePos - transform.position;
+            float rotZ = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg - 90f;
+            transform.rotation = Quaternion.Euler(0, 0, rotZ);
+            float angle = 5f;
+            for (int i = 0; i < 2; i++){
+                var shotRotation = transform.rotation;
+                shotRotation *= Quaternion.Euler(0,0,angle);
+                //transform.rotation = shotRotation;
+                Instantiate(voidBullet, bulletTransform.position, shotRotation);
+                angle -= 10f;
+            }
         }
     }
 
@@ -180,7 +254,35 @@ public class Shooting : MonoBehaviour
         }
     }
 
+    private void ShootSeven(string colour){
+        if (colour == "Holy"){
+            Vector3 rotation = mousePos - transform.position;
+            float rotZ = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg - 90f;
+            transform.rotation = Quaternion.Euler(0, 0, rotZ);
+            float angle = 33f;
+            for (int i = 0; i < 7; i++){
+                var shotRotation = transform.rotation;
+                shotRotation *= Quaternion.Euler(0,0,angle);
+                Instantiate(holyBullet, bulletTransform.position, shotRotation);
+                angle -= 11f;
+            }
+        }
+        else{
+            Vector3 rotation = mousePos - transform.position;
+            float rotZ = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg - 90f;
+            transform.rotation = Quaternion.Euler(0, 0, rotZ);
+            float angle = 33f;
+            for (int i = 0; i < 5; i++){
+                var shotRotation = transform.rotation;
+                shotRotation *= Quaternion.Euler(0,0,angle);
+                Instantiate(voidBullet, bulletTransform.position, shotRotation);
+                angle -= 11f;
+            }
+        }
+    }
+
     public void ShootAOEPulse(string colour){
+        CinemachineShake.Instance.ShakeCamera(shakeIntensity, duration);
         if (colour == "Holy"){
             Vector3 rotation = mousePos - transform.position;
             float rotZ = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg - 90f;

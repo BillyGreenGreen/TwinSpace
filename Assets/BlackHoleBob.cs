@@ -8,7 +8,7 @@ public class BlackHoleBob : MonoBehaviour
     float height = 0.12f;
     Vector3 pos;
     private void Start() {
-        pos = transform.localPosition;
+        pos = transform.position;
     }
 
     // Update is called once per frame

@@ -35,6 +35,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
         if (GameManager.Instance.isGamePlaying){
             
             if (shouldBeDroppingOrbs && numberOfOrbsLeftToDrop > 0){
@@ -77,6 +78,7 @@ public class PlayerController : MonoBehaviour
         }
         else{
             movement = Vector2.zero;
+            shouldBeDroppingOrbs = false;
         }
         
     }
@@ -104,7 +106,7 @@ public class PlayerController : MonoBehaviour
     }
 
     private void OnTriggerEnter2D(Collider2D other) {
-        if (other.name == "VoidBlackHole"){
+        if (other.name == "VoidBlackHole" + GameManager.Instance.arenaIndex.ToString()){
             numberOfOrbsToDrop = GameManager.Instance.numberOfVoidOrbs;
             if (numberOfOrbsToDrop > 0){
                 numberOfOrbsLeftToDrop = numberOfOrbsToDrop;
@@ -113,7 +115,7 @@ public class PlayerController : MonoBehaviour
             }
             
         }
-        else if(other.name == "HolyBlackHole"){
+        else if(other.name == "HolyBlackHole" + GameManager.Instance.arenaIndex.ToString()){
             numberOfOrbsToDrop = GameManager.Instance.numberOfHolyOrbs;
             if (numberOfOrbsToDrop > 0){
                 numberOfOrbsLeftToDrop = numberOfOrbsToDrop;

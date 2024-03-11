@@ -6,27 +6,29 @@ public class SlimeSpawner : MonoBehaviour
 {
     private float timeBetweenSpawning = 2f; //2
     private float timer = 0;
+    public bool spawnerIsActive = false;
+    public GameObject[] holySpawnPoints;
+    public GameObject[] voidSpawnPoints;
     private GameObject[] spawnPoints;
     private float slimeFireRate = 1f; //1
     private float slimeMoveSpeed = 4; //4
     private float slimeRotateAimSpeed = 1; //1
     private int chanceForBigSlime = 5;
-    private int stageForBigSlime = 3;
+    private int stageForBigSlime = 1;
 
     private void Update() {
-        if (GameManager.Instance.isGamePlaying){
+        if (GameManager.Instance.isGamePlaying && spawnerIsActive){
             timer += Time.deltaTime;
             int randomPoint = Random.Range(0, 4);
             if (timer > timeBetweenSpawning){
                 if (GameManager.Instance.shouldSpawnHoly){
                     //spawn holy mobs
                     float randomNum = Random.Range(0f, 100f);
-                    if (GameManager.Instance.stage == stageForBigSlime && randomNum < chanceForBigSlime && GameObject.Find("Holy_Big_Slime(Clone)") == null && GameObject.Find("Void_Big_Slime(Clone)") == null){
-                        //Instantiate(Resources.Load<GameObject>("Prefabs/VFX/Shockwave"), new Vector2(0,0), Quaternion.identity);
-                        Instantiate(Resources.Load<GameObject>("Prefabs/Enemies/Holy_Big_Slime"), new Vector2(-0.45f, 32.4f), Quaternion.identity);
+                    if (GameManager.Instance.stage >= stageForBigSlime && randomNum < chanceForBigSlime && GameObject.Find("Holy_Big_Slime(Clone)") == null && GameObject.Find("Void_Big_Slime(Clone)") == null){
+                        Instantiate(Resources.Load<GameObject>("Prefabs/Enemies/Holy_Big_Slime"), new Vector2(-0.45f, 32f + GameManager.Instance.yOffset), Quaternion.identity);
                     }
 
-                    spawnPoints = GameManager.Instance.holySpawnPoints;
+                    spawnPoints = holySpawnPoints;
                     GameObject slime = Instantiate(Resources.Load<GameObject>("Prefabs/Enemies/Holy_Slime"), spawnPoints[randomPoint].transform.position, Quaternion.identity);
                     SlimeAI slimeAI = slime.GetComponent<SlimeAI>();
                     slimeAI.fireRate = slimeFireRate;
@@ -37,12 +39,11 @@ public class SlimeSpawner : MonoBehaviour
                 }
                 else{
                     float randomNum = Random.Range(0f, 100f);
-                    if (GameManager.Instance.stage == stageForBigSlime && randomNum < chanceForBigSlime && GameObject.Find("Holy_Big_Slime(Clone)") == null && GameObject.Find("Void_Big_Slime(Clone)") == null){
-                        //Instantiate(Resources.Load<GameObject>("Prefabs/VFX/Shockwave"), new Vector2(80,0), Quaternion.identity);
-                        Instantiate(Resources.Load<GameObject>("Prefabs/Enemies/Void_Big_Slime"), new Vector2(79.45f, 32.4f), Quaternion.identity);
+                    if (GameManager.Instance.stage >= stageForBigSlime && randomNum < chanceForBigSlime && GameObject.Find("Holy_Big_Slime(Clone)") == null && GameObject.Find("Void_Big_Slime(Clone)") == null){
+                        Instantiate(Resources.Load<GameObject>("Prefabs/Enemies/Void_Big_Slime"), new Vector2(79.45f, 32f + GameManager.Instance.yOffset), Quaternion.identity);
                     }
                     //spawn void mobs
-                    spawnPoints = GameManager.Instance.voidSpawnPoints;
+                    spawnPoints = voidSpawnPoints;
                     GameObject slime = Instantiate(Resources.Load<GameObject>("Prefabs/Enemies/Void_Slime"), spawnPoints[randomPoint].transform.position, Quaternion.identity);
                     SlimeAI slimeAI = slime.GetComponent<SlimeAI>();
                     slimeAI.fireRate = slimeFireRate;

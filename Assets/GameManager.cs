@@ -7,13 +7,14 @@ using UnityEngine.Rendering;
 using TMPro;
 using System;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance {get; private set;}
     public PlayerCrosshair playerCrosshair;
     public PlayerController playerController;
-    public SlimeSpawner slimeSpawner;
+    public SlimeSpawner[] slimeSpawners;
     public PowerUps powerUps;
     public Volume volume;
     public Canvas uiCanvas;
@@ -22,6 +23,10 @@ public class GameManager : MonoBehaviour
     public GameObject gameWonScreen;
     public GameObject pauseScreen;
     public AudioSource BGM;
+    public int arenaIndex = 0;
+    public int yOffset = -1;
+    private int amountOfArenas = 2; //amount of arenas to choose from
+
     [Header("Post Processing")]
     private static ChromaticAberration ca;
     private static LensDistortion ld;
@@ -30,8 +35,6 @@ public class GameManager : MonoBehaviour
     private float vigTimerDuration = 20;
 
     [Header("Enemies")]
-    [SerializeField] public GameObject[] holySpawnPoints;
-    [SerializeField] public GameObject[] voidSpawnPoints;
     [SerializeField] public List<GameObject> holyEnemies;
     [SerializeField] public List<GameObject> voidEnemies;
     public bool shouldSpawnHoly = true;
@@ -41,10 +44,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI timerText;
     [SerializeField] private TextMeshProUGUI holyOrbText;
     [SerializeField] private TextMeshProUGUI voidOrbText;
-    [SerializeField] private TextMeshProUGUI holyDepositText;
-    [SerializeField] private TextMeshProUGUI voidDepositText;
+    [SerializeField] private TextMeshProUGUI[] holyDepositText;
+    [SerializeField] private TextMeshProUGUI[] voidDepositText;
     [SerializeField] private GameObject tpTooltip;
-    [SerializeField] private Slider healthSlider;
+    [SerializeField] public Slider healthSlider;
     [SerializeField] private GameObject shieldEffect;
     [SerializeField] private GameObject powerUpParent;
     [SerializeField] private TextMeshProUGUI healthText;
@@ -56,11 +59,12 @@ public class GameManager : MonoBehaviour
     public int numberOfDepositedHolyOrbs;
     public int numberOfDepositedVoidOrbs;
     public int playerHealth;
-    private float numberOfOrbsToCollect = 15;
+    private float numberOfOrbsToCollect = 1;
     private float bulletSpeed = 20;
     public bool invincible = false;
     private float invincibleTimer;
     private float invincibleTimerDuration;
+    private List<int> shieldHealthPercentages = new List<int>();
     public int stage = 1;
 
     private void Awake() 
@@ -84,8 +88,8 @@ public class GameManager : MonoBehaviour
         volume.profile.TryGet(out ca);
         volume.profile.TryGet(out vg);
         playerHealth = (int)healthSlider.maxValue;
-        holyDepositText.text = "0/" + numberOfOrbsToCollect.ToString();
-        voidDepositText.text = "0/" + numberOfOrbsToCollect.ToString();
+        holyDepositText[arenaIndex].text = "0/" + numberOfOrbsToCollect.ToString();
+        voidDepositText[arenaIndex].text = "0/" + numberOfOrbsToCollect.ToString();
 
         if (!PlayerPrefs.HasKey("GamesWon")){
             PlayerPrefs.SetInt("GamesWon", 0);
@@ -94,6 +98,9 @@ public class GameManager : MonoBehaviour
             //PlayerPrefs.SetInt("SavedStage", 1);
             //stage = PlayerPrefs.GetInt("SavedStage");
         }
+
+        arenaIndex = 0;
+        slimeSpawners[arenaIndex].spawnerIsActive = true;
 
         
 
@@ -133,7 +140,11 @@ public class GameManager : MonoBehaviour
         }
         
     }
-    public void EnableShield(int duration){
+    public void EnableShield(int duration, List<int> percentages){
+        shieldHealthPercentages.Clear();
+        foreach (int percent in percentages){
+            shieldHealthPercentages.Add(percent);
+        }
         invincibleTimerDuration = duration;
     }
 
@@ -185,7 +196,13 @@ public class GameManager : MonoBehaviour
         //Debug.Log(powerUps.GeneratePowerUpsToBuy().Count);
         foreach (string s in powerUps.GeneratePowerUpsToBuy()){
             string nameOfPowerUp = s.Split(" ")[0];
-            string levelOfPowerUp = s.Split(" ")[1];
+            string levelOfPowerUp;
+            try{
+                levelOfPowerUp = s.Split(" ")[1];
+            }catch{
+                levelOfPowerUp = "";
+            }
+            
             //Debug.Log(nameOfPowerUp + levelOfPowerUp);
             GameObject go = Instantiate(Resources.Load<GameObject>("PowerUps/PowerUpTile"), powerUpParent.transform);
             go.GetComponent<Image>().sprite = Resources.Load<Sprite>("PowerUps/" + nameOfPowerUp);
@@ -199,7 +216,10 @@ public class GameManager : MonoBehaviour
                 nameOfPowerUp = "faster dash cooldown";
             }
             go.transform.Find("NameOfPowerUp").GetComponent<TextMeshProUGUI>().text = nameOfPowerUp;
-            go.transform.Find("LevelOfPowerUp").GetComponent<TextMeshProUGUI>().text = "Level " + levelOfPowerUp;
+            if (levelOfPowerUp != ""){
+                go.transform.Find("LevelOfPowerUp").GetComponent<TextMeshProUGUI>().text = "Level " + levelOfPowerUp;
+            }
+            
             
         }
         playerCrosshair.HideCrosshair();
@@ -210,11 +230,20 @@ public class GameManager : MonoBehaviour
     public void DecreasePlayerHealth(int damage){
         if (isGamePlaying && !playerController.isDashing){
             if (!invincible){
+                int calcHealth;
+                calcHealth = playerHealth;
                 playerHealth -= damage;
                 healthSlider.value = playerHealth;
+                
                 healthText.text = string.Format("{0}/{1}", playerHealth.ToString(), healthSlider.maxValue.ToString());
-                if ((playerHealth >= 28 && playerHealth <= 32 || playerHealth >= 58 && playerHealth <= 62 || playerHealth >= 88 && playerHealth <= 92) && !invincible){
-                    invincible = true;
+                
+                for (int i = 0; i < damage; i++)
+                {
+                    calcHealth -= 1;
+                    if (shieldHealthPercentages.Contains(((int)((calcHealth / healthSlider.maxValue) * 100)))){
+                        invincible = true;
+                        break;
+                    }
                 }
                 if (playerHealth <= 0){
                     KillPlayer();
@@ -226,13 +255,11 @@ public class GameManager : MonoBehaviour
     }
 
     public void IncreasePlayerHealth(int healAmount){
-        if (isGamePlaying){
-            playerHealth += healAmount;
-            healthSlider.value = playerHealth;
-            healthText.text = string.Format("{0}/{1}", playerHealth.ToString(), healthSlider.maxValue.ToString());
-            if (playerHealth > healthSlider.maxValue){
-                playerHealth = (int)healthSlider.maxValue;
-            }
+        playerHealth += healAmount;
+        healthSlider.value = playerHealth;
+        healthText.text = string.Format("{0}/{1}", playerHealth.ToString(), healthSlider.maxValue.ToString());
+        if (playerHealth > healthSlider.maxValue){
+            playerHealth = (int)healthSlider.maxValue;
         }
     }
 
@@ -247,15 +274,22 @@ public class GameManager : MonoBehaviour
         foreach (GameObject go in GameObject.FindGameObjectsWithTag("PowerUpTile")){
             Destroy(go);
         }
-        holyDepositText.text = "0/" + Math.Truncate(numberOfOrbsToCollect).ToString();
-        voidDepositText.text = "0/" + Math.Truncate(numberOfOrbsToCollect).ToString();
         playerHealth = (int)healthSlider.maxValue;
         healthSlider.value = playerHealth;
         healthText.text = string.Format("{0}/{1}", playerHealth.ToString(), healthSlider.maxValue.ToString());
         gameOverScreen.SetActive(false);
         gameWonScreen.SetActive(false);
         vigTimer = 0;
-        GameObject.Find("Player").transform.position = new Vector3(0, -1.33f, 0);
+        slimeSpawners[arenaIndex].spawnerIsActive = false;
+        arenaIndex = UnityEngine.Random.Range(0, amountOfArenas);
+        slimeSpawners[arenaIndex].spawnerIsActive = true;
+        holyDepositText[arenaIndex].text = "0/" + Math.Truncate(numberOfOrbsToCollect).ToString();
+        voidDepositText[arenaIndex].text = "0/" + Math.Truncate(numberOfOrbsToCollect).ToString();
+        yOffset = -((arenaIndex * 100) + 1); //if 2 => -201
+        playerController.gameObject.transform.position = new Vector3(0, yOffset, 0);
+        //GameObject.Find("Player").transform.position = new Vector3(0, -1f, 0);
+
+
         if (shouldSpawnHoly){
             foreach(GameObject go in holyEnemies){
                 Destroy(go);
@@ -291,12 +325,20 @@ public class GameManager : MonoBehaviour
             Destroy(go);
         }
         IncreaseDifficulty();
-        holyDepositText.text = "0/" + Math.Truncate(numberOfOrbsToCollect).ToString();
-        voidDepositText.text = "0/" + Math.Truncate(numberOfOrbsToCollect).ToString();
+        
         gameOverScreen.SetActive(false);
         gameWonScreen.SetActive(false);
         vigTimer = 0;
-        GameObject.Find("Player").transform.position = new Vector3(0, -1.33f, 0);
+
+        //new arena
+        slimeSpawners[arenaIndex].spawnerIsActive = false;
+        arenaIndex = UnityEngine.Random.Range(0, amountOfArenas);
+        slimeSpawners[arenaIndex].spawnerIsActive = true;
+
+        holyDepositText[arenaIndex].text = "0/" + Math.Truncate(numberOfOrbsToCollect).ToString();
+        voidDepositText[arenaIndex].text = "0/" + Math.Truncate(numberOfOrbsToCollect).ToString();
+        yOffset = -((arenaIndex * 100) + 1); //if 2 => -201
+        playerController.gameObject.transform.position = new Vector3(0, yOffset, 0);
         if (shouldSpawnHoly){
             foreach(GameObject go in holyEnemies){
                 Destroy(go);
@@ -320,8 +362,8 @@ public class GameManager : MonoBehaviour
     }
 
     private void IncreaseDifficulty(){
-        numberOfOrbsToCollect += 1f;
-        slimeSpawner.IncreaseSlimeDifficulty();
+        //numberOfOrbsToCollect += 1f;
+        slimeSpawners[arenaIndex].IncreaseSlimeDifficulty();
 
     }
 
@@ -363,13 +405,13 @@ public class GameManager : MonoBehaviour
         if (colour == "Holy"){
             numberOfDepositedHolyOrbs++;
             if (numberOfDepositedHolyOrbs <= Math.Truncate(numberOfOrbsToCollect)){
-                holyDepositText.text = numberOfDepositedHolyOrbs.ToString() + "/"+ Math.Truncate(numberOfOrbsToCollect).ToString();
+                holyDepositText[arenaIndex].text = numberOfDepositedHolyOrbs.ToString() + "/"+ Math.Truncate(numberOfOrbsToCollect).ToString();
             }
         }
         else{
             numberOfDepositedVoidOrbs++;
             if (numberOfDepositedVoidOrbs <= numberOfOrbsToCollect){
-                voidDepositText.text = numberOfDepositedVoidOrbs.ToString() + "/" + Math.Truncate(numberOfOrbsToCollect).ToString();
+                voidDepositText[arenaIndex].text = numberOfDepositedVoidOrbs.ToString() + "/" + Math.Truncate(numberOfOrbsToCollect).ToString();
             }
         }
         if (numberOfDepositedHolyOrbs >= Math.Truncate(numberOfOrbsToCollect) && numberOfDepositedVoidOrbs >= Math.Truncate(numberOfOrbsToCollect) && !gameWonScreen.activeSelf){
