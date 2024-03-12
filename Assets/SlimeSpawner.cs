@@ -13,7 +13,9 @@ public class SlimeSpawner : MonoBehaviour
     private float slimeFireRate = 1f; //1
     private float slimeMoveSpeed = 4; //4
     private float slimeRotateAimSpeed = 1; //1
-    private int chanceForBigSlime = 5;
+    private float randomMinHealth = 1;
+    private float randomMaxHealth = 3;
+    private int chanceForBigSlime = 0;
     private int stageForBigSlime = 1;
 
     private void Update() {
@@ -31,6 +33,8 @@ public class SlimeSpawner : MonoBehaviour
                     spawnPoints = holySpawnPoints;
                     GameObject slime = Instantiate(Resources.Load<GameObject>("Prefabs/Enemies/Holy_Slime"), spawnPoints[randomPoint].transform.position, Quaternion.identity);
                     SlimeAI slimeAI = slime.GetComponent<SlimeAI>();
+                    int randomHealth = Random.Range((int)randomMinHealth, (int)randomMaxHealth);
+                    slimeAI.slimeHealth = randomHealth;
                     slimeAI.fireRate = slimeFireRate;
                     slimeAI.speed = slimeMoveSpeed;
                     slimeAI.rotateSpeed = slimeRotateAimSpeed;
@@ -46,6 +50,8 @@ public class SlimeSpawner : MonoBehaviour
                     spawnPoints = voidSpawnPoints;
                     GameObject slime = Instantiate(Resources.Load<GameObject>("Prefabs/Enemies/Void_Slime"), spawnPoints[randomPoint].transform.position, Quaternion.identity);
                     SlimeAI slimeAI = slime.GetComponent<SlimeAI>();
+                    int randomHealth = Random.Range((int)randomMinHealth, (int)randomMaxHealth);
+                    slimeAI.slimeHealth = randomHealth;
                     slimeAI.fireRate = slimeFireRate;
                     slimeAI.speed = slimeMoveSpeed;
                     slimeAI.rotateSpeed = slimeRotateAimSpeed;
@@ -59,11 +65,12 @@ public class SlimeSpawner : MonoBehaviour
     }
 
     public void IncreaseSlimeDifficulty(){
-        //should be hard at wave 20 difficulty
-        timeBetweenSpawning -= 0.075f; //0.5 with wave 20
+        //should be IMPOSSIBLE at wave 20 difficulty
+        timeBetweenSpawning -= 0.0875f; //0.25 with wave 20
         slimeFireRate -= 0.04f; //0.2 with wave 20
         slimeMoveSpeed += 0.1f; //6 with wave 20
         slimeRotateAimSpeed += 0.45f; //10 with wave 20
-        
+        randomMinHealth += 0.3f; //7 with wave 20
+        randomMaxHealth += 0.35f; //10 with wave 20
     }
 }

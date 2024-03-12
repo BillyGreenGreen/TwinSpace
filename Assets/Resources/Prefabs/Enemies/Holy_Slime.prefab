@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4150268218564567197}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: FiringPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -46,7 +46,8 @@ GameObject:
   - component: {fileID: 4150268218641586009}
   - component: {fileID: 4150268218641586010}
   - component: {fileID: 8227086130230591065}
-  m_Layer: 0
+  - component: {fileID: 6507800518563333029}
+  m_Layer: 8
   m_Name: Holy_Slime
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -157,7 +158,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   slimeHealth: 0
   randomMaxHealth: 4
-  speed: 4
+  speed: 100
   target: {fileID: 0}
   rotateSpeed: 1
   distanceToShoot: 5
@@ -167,6 +168,7 @@ MonoBehaviour:
   projectilePrefab: {fileID: 1910840257414565879, guid: f8a5484814ec7b24ebb966ee01ddfab1, type: 3}
   firingPointParent: {fileID: 4150268219925439185}
   firingPoint: {fileID: 4150268218564567197}
+  nextWaypointDistance: 3
 --- !u!61 &4150268218641586009
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -206,13 +208,13 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0
+  m_LinearDrag: 10
   m_AngularDrag: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_Interpolate: 1
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!114 &8227086130230591065
 MonoBehaviour:
@@ -253,6 +255,34 @@ MonoBehaviour:
   m_LocalBounds:
     m_Center: {x: 0.04371786, y: 0.1805439, z: 0}
     m_Extent: {x: 0.23648596, y: 0.15982723, z: 0}
+--- !u!114 &6507800518563333029
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4150268218641586004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 373b52eb9bf8c40f785bb6947a1aee66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 1
+  drawGizmos: 1
+  detailedGizmos: 0
+  startEndModifier:
+    addPoints: 0
+    exactStartPoint: 3
+    exactEndPoint: 3
+    useRaycasting: 0
+    mask:
+      serializedVersion: 2
+      m_Bits: 4294967295
+    useGraphRaycasting: 0
+  traversableTags: -1
+  tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  graphMask:
+    value: -1
 --- !u!1 &4150268219925439184
 GameObject:
   m_ObjectHideFlags: 0
@@ -262,7 +292,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4150268219925439185}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: FiringPointParent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -295,7 +325,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5362943655238940364}
   - component: {fileID: 2519913057806150748}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Light 2D
   m_TagString: Untagged
   m_Icon: {fileID: 0}

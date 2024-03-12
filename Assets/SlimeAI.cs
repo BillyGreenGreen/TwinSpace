@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Pathfinding;
 
 public class SlimeAI : MonoBehaviour
 {
@@ -27,29 +28,65 @@ public class SlimeAI : MonoBehaviour
 
     public Transform firingPointParent;
     public Transform firingPoint;
+
+    [Header("Pathfinding")]
+    public float nextWaypointDistance = 3;
+    Path path;
+    int currentWaypoint = 0;
+    bool reachedEndOfPath = false;
+    Seeker seeker;
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
+        seeker = GetComponent<Seeker>();
+        
         if (GameObject.FindGameObjectWithTag("Player")){
             target = GameObject.FindGameObjectWithTag("Player").transform;
         }
-        int randomHealth = Random.Range(1, randomMaxHealth);
-        slimeHealth = randomHealth;
+        InvokeRepeating("UpdatePath", 0f, .5f);
+        seeker.StartPath(rb.position, target.position, OnPathComplete);
+        
         gameObjectName = gameObject.name;
     }
+    
+    void UpdatePath(){
+        if (!seeker.IsDone()) return;
+        seeker.StartPath(rb.position, target.position, OnPathComplete);
+    }
 
-    private void FixedUpdate() {
-        
+    void OnPathComplete(Path p){
+        if (!p.error){
+            path = p;
+            currentWaypoint = 0;
+        }
     }
     // Update is called once per frame
     void Update()
     {
         if (GameManager.Instance.isGamePlaying){
             if (shouldMove){
+                if (path == null) return;
+                if (currentWaypoint >= path.vectorPath.Count){
+                    reachedEndOfPath = true;
+                    return;
+                }
+                else{
+                    reachedEndOfPath = false;
+                }
+
+                
+
                 if (Vector2.Distance(target.position, transform.position) >= distanceToStop){
-                    transform.position = Vector2.MoveTowards(transform.position, target.position, speed * Time.deltaTime);
+                    Vector2 direction = ((Vector2)path.vectorPath[currentWaypoint] - rb.position).normalized;
+                    Vector2 force = direction * speed * Time.deltaTime;
+                    rb.AddForce(force * 600f);
+                    float distance = Vector2.Distance(rb.position, path.vectorPath[currentWaypoint]);
+                    if (distance < nextWaypointDistance){
+                        currentWaypoint++;
+                    }
+                    //transform.position = Vector2.MoveTowards(transform.position, target.position, speed * Time.deltaTime);
                     Vector2 dir = transform.position - target.position;
                     if (dir.x > 0){
                         GetComponent<SpriteRenderer>().flipX = true;
