@@ -12,6 +12,7 @@ public class BigSlimeAI : MonoBehaviour
     [SerializeField] private Transform firingPoint;
     [SerializeField] private GameObject projectilePrefab;
     private Vector2 startPos; //-0.45, 32.4 for holy +80 for void
+    float circleExpandDuration = 5;
     Vector2 newPos;
     Transform shockwaveParent;
     Sequence sequence;
@@ -35,10 +36,11 @@ public class BigSlimeAI : MonoBehaviour
                 Instantiate(Resources.Load<GameObject>("Prefabs/VFX/Shockwave"), shockwaveParent.position, Quaternion.identity, shockwaveParent);
                 CinemachineShake.Instance.ShakeCamera(6, 0.2f);
                 ShootAOEPulse();
+                circleExpandDuration = Random.Range(2, 7);
             }));
-            sequence.Append(circleExpand.transform.DOScale(0.65f, 5));//expand circle
-            sequence.Join(circleExpand.GetComponent<SpriteRenderer>().DOColor(new Color(circleExpand.GetComponent<SpriteRenderer>().color.r, circleExpand.GetComponent<SpriteRenderer>().color.g, circleExpand.GetComponent<SpriteRenderer>().color.b, 1f), 5));//colour circle
-            sequence.Join(circleExpand.transform.DOLocalRotate(new Vector3(0,0, -360), 5, RotateMode.FastBeyond360).SetEase(Ease.OutSine));
+            sequence.Append(circleExpand.transform.DOScale(0.65f, circleExpandDuration));//expand circle
+            sequence.Join(circleExpand.GetComponent<SpriteRenderer>().DOColor(new Color(circleExpand.GetComponent<SpriteRenderer>().color.r, circleExpand.GetComponent<SpriteRenderer>().color.g, circleExpand.GetComponent<SpriteRenderer>().color.b, 1f), circleExpandDuration));//colour circle
+            sequence.Join(circleExpand.transform.DOLocalRotate(new Vector3(0,0, -360), circleExpandDuration, RotateMode.FastBeyond360).SetEase(Ease.OutSine));
             sequence.Append(transform.DOShakePosition(1f, new Vector3(0.5f, 0, 0), 5, 0).SetEase(Ease.Flash).OnComplete(() => {
                 Instantiate(Resources.Load<GameObject>("Prefabs/VFX/Shockwave"), shockwaveParent.position, Quaternion.identity, shockwaveParent);
                 if (GameManager.Instance.shouldSpawnHoly && gameObject.name.Contains("Holy") || !GameManager.Instance.shouldSpawnHoly && gameObject.name.Contains("Void")){
