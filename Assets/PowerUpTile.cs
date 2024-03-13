@@ -65,6 +65,9 @@ public class PowerUpTile : MonoBehaviour
     public void ShowTooltip(){
         //yellow colour upgrade #FFAF0B
         Transform gameWonCanvas = GameObject.Find("GameWon").transform;
+        if (GameObject.Find("PowerUpTooltip(Clone)")){
+            Destroy(GameObject.Find("PowerUpTooltip(Clone)"));
+        }
         tooltip = Instantiate(Resources.Load<GameObject>("PowerUps/PowerUpTooltip"), new Vector2(transform.position.x, transform.position.y - 135), Quaternion.identity, gameWonCanvas);
         tooltip.transform.Find("PowerUpName").GetComponent<TextMeshProUGUI>().text = nameOfPowerUp.text;
         tooltip.transform.Find("PowerUpLevel").GetComponent<TextMeshProUGUI>().text = "L" + levelOfPowerUp.text.Split(" ")[1];
@@ -295,16 +298,17 @@ public class PowerUpTile : MonoBehaviour
             }
             description.text = string.Format("Dash cooldown reduced to <#FFAF0B>{0} <#FFFFFF>{1}.{2}", upgradeText[0], secondsPlural, upgradeText[1]);
         }
-        CanvasGroup cg = tooltip.GetComponent<CanvasGroup>();
-        DOVirtual.Float(0, 1, 0.2f, v => {
-            cg.alpha = v;
-        });
+        //CanvasGroup cg = tooltip.GetComponent<CanvasGroup>();
+        //DOVirtual.Float(0, 1, 0.2f, v => {
+        //    cg.alpha = v;
+        //});
     }
 
     public void HideTooltip(){
-        CanvasGroup cg = tooltip.GetComponent<CanvasGroup>();
-        DOVirtual.Float(1, 0, 0.2f, v => {
-            cg.alpha = v;
-        });
+        Destroy(tooltip);
+        //CanvasGroup cg = tooltip.GetComponent<CanvasGroup>();
+        //DOVirtual.Float(1, 0, 0.2f, v => {
+        //    cg.alpha = v;
+        //});
     }
 }

@@ -265,6 +265,7 @@ public class PowerUps : MonoBehaviour
             }
             else if (fasterDashCooldownUpgradeLevel == 4){
                 playerController.dashCooldown = 3f;
+                GameManager.Instance.dashUpgradeLevelAllowsNoDamage = true;
             }
             else if (fasterDashCooldownUpgradeLevel == 5){
                 playerController.dashCooldown = 2.5f;
@@ -287,6 +288,7 @@ public class PowerUps : MonoBehaviour
             fasterDashCooldownUpgradeLevel = 1;
             playerController.dashCooldown = 5f;
             playerController.dashBar.maxValue = playerController.dashCooldown;
+            GameManager.Instance.dashUpgradeLevelAllowsNoDamage = false;
         }
     }
 

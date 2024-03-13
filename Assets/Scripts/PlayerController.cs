@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private float moveSpeed = 2f;
+    [SerializeField] private float moveSpeed = 3f;
     private Vector2 movement;
     private Rigidbody2D rb;
     private float timeBetweenOrbDrops = 0.1f;
@@ -25,11 +26,29 @@ public class PlayerController : MonoBehaviour
     float dashTimer = 0;
     public bool isDashing = false;
     bool canDash = true;
+    bool dashButtonDown = false;
+    public PlayerInputActions playerInputActions;
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         dashBar.maxValue = dashCooldown;
+    }
+
+    private void Awake() {
+        playerInputActions = new PlayerInputActions();
+        if (!playerInputActions.Player.enabled){
+            playerInputActions.Player.Enable();
+        }
+        //playerInputActions.Player.Dash.performed += DashPlayer;
+        //playerInputActions.Player.Dash.canceled += StopDashPlayer;
+    }
+
+    public void DashPlayer(InputAction.CallbackContext ctx){
+        dashButtonDown = true;
+    }
+    private void StopDashPlayer(InputAction.CallbackContext ctx){
+        dashButtonDown = false;
     }
 
     // Update is called once per frame
@@ -58,7 +77,7 @@ public class PlayerController : MonoBehaviour
             else{
                 shouldBeDroppingOrbs = false;
             }
-            if (Input.GetKeyDown(KeyCode.Space) && canDash){
+            if (dashButtonDown && canDash){
                 dashTimer += Time.deltaTime;
                 StartCoroutine(Dash());
             }
@@ -72,9 +91,14 @@ public class PlayerController : MonoBehaviour
             if (isDashing){
                 return;
             }
-            movement.x = Input.GetAxisRaw("Horizontal");
-            movement.y = Input.GetAxisRaw("Vertical");
-            
+            //movement.x = Input.GetAxisRaw("Horizontal");
+            //movement.y = Input.GetAxisRaw("Vertical");
+            movement.x = playerInputActions.Player.Movement.ReadValue<Vector2>().x;
+            movement.y = playerInputActions.Player.Movement.ReadValue<Vector2>().y;
+            if (movement.x != 0 && movement.y != 0){
+                //movement.x = movement.x / 2;
+                //movement.y = movement.y / 2;
+            }
         }
         else{
             movement = Vector2.zero;
@@ -102,6 +126,7 @@ public class PlayerController : MonoBehaviour
         isDashing = false;
 
         yield return new WaitForSeconds(dashCooldown);
+        dashButtonDown = false;
         canDash = true;
     }
 

@@ -5,18 +5,17 @@ using UnityEngine;
 public class PlayerCrosshair : MonoBehaviour
 {
     [SerializeField] private Color crosshairColour;
-    private GameObject crosshair;
+    public GameObject crosshair;
     // Start is called before the first frame update
     void Start()
     {
-        crosshair = Instantiate(Resources.Load<GameObject>("Prefabs/Crosshairs/Crosshair"));
-        if (!PlayerPrefs.HasKey("CrosshairR")){
-            crosshairColour = new Color(1, 0, 0);
+        if (GameObject.FindGameObjectWithTag("Crosshair") == null){
+            crosshair = GameObject.FindGameObjectWithTag("DebugCrosshair");
         }
         else{
-            crosshairColour = new Color(PlayerPrefs.GetFloat("CrosshairR"), PlayerPrefs.GetFloat("CrosshairG"), PlayerPrefs.GetFloat("CrosshairB"));
+            crosshair = GameObject.FindGameObjectWithTag("Crosshair");
         }
-        crosshair.GetComponent<SpriteRenderer>().color = crosshairColour;
+        
         Cursor.visible = false;
     }
 

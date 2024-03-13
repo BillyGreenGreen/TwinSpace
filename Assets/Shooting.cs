@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Users;
+using UnityEngine.UI;
 
 public class Shooting : MonoBehaviour
 {
@@ -19,23 +22,59 @@ public class Shooting : MonoBehaviour
     public float pulseTime;
     float pulseTimer = 0;
     float shakeIntensity = 2, duration = 0.2f;
+    public PlayerInput playerInput;
+    PlayerInputActions playerInputActions;
+    bool shootButtonDown = false;
+    Vector2 mousePosInput;
+    float rotZ;
     // Start is called before the first frame update
-    void Start()
-    {
-        
+    private void Awake() {
+        //playerInput = GetComponent<PlayerInput>();
+        playerInputActions = new PlayerInputActions();
+        if (!playerInputActions.Player.enabled){
+            playerInputActions.Player.Enable();
+        }
+    }
+
+    public void Shoot(InputAction.CallbackContext ctx){
+        shootButtonDown = true;
     }
 
     // Update is called once per frame
     void Update()
     {
+        //Debug.Log(playerInputActions.Player.Aim.ReadValue<Vector2>());
         if (GameManager.Instance.isGamePlaying){
-            var pos = Input.mousePosition;
-            pos.z = 1;
-            mousePos = Camera.main.ScreenToWorldPoint(pos);
-
-            Vector3 rotation = mousePos - transform.position;
-
-            float rotZ = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg;
+            Debug.Log(playerInput.currentControlScheme);
+            var pos = playerInputActions.Player.Aim.ReadValue<Vector2>();
+            if (playerInput.currentControlScheme == "Keyboard"){
+                //enable mouse crosshair
+                //disable thing around you
+                //rotate with mouse
+                GameManager.Instance.playerCrosshair.crosshair.SetActive(true);
+                bulletTransform.GetComponent<SpriteRenderer>().sprite = null;
+                mousePos = Camera.main.ScreenToWorldPoint(pos);
+                Vector3 rotation = mousePos - transform.position;
+                rotZ = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg - 90f;
+                transform.rotation = Quaternion.Euler(0, 0, rotZ);
+            }
+            else if (playerInput.currentControlScheme == "Gamepad"){
+                if (GameManager.Instance.playerCrosshair.crosshair.GetComponent<Image>().sprite != null){
+                    bulletTransform.GetComponent<SpriteRenderer>().sprite = GameManager.Instance.playerCrosshair.crosshair.GetComponent<Image>().sprite;
+                    GameManager.Instance.playerCrosshair.crosshair.SetActive(false);
+                }
+                
+                if (pos.x != 0 && pos.y != 0){
+                    Vector3 angle = transform.localEulerAngles;
+                    transform.localEulerAngles = new Vector3(0f, 0f, Mathf.Atan2(pos.x, pos.y) * -180 / Mathf.PI);
+                }
+            }
+            
+           
+            //Vector3 angle = transform.localEulerAngles;
+            //transform.localEulerAngles = new Vector3(0f, 0f, Mathf.Atan2(pos.x, pos.y) * -180 / Mathf.PI);
+            
+            
 
             //transform.rotation = Quaternion.Euler(0,0,rotZ);
             if (!canFire){
@@ -45,7 +84,7 @@ public class Shooting : MonoBehaviour
                     timer = 0;
                 }
             }
-            if (Input.GetMouseButton(0) && canFire){
+            if (playerInputActions.Player.Shoot.IsPressed() && canFire){
                 canFire = false;
                 if (GameManager.Instance.shouldSpawnHoly){
                     if (amountOfBulletsToFire == 1){
@@ -156,16 +195,12 @@ public class Shooting : MonoBehaviour
 
     private void ShootOne(string colour){
         if (colour == "Holy"){
-            Vector3 rotation = mousePos - transform.position;
-            float rotZ = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg - 90f;
-            transform.rotation = Quaternion.Euler(0, 0, rotZ);
+            
 
             Instantiate(holyBullet, bulletTransform.position, bulletTransform.rotation);
         }
         else{
-            Vector3 rotation = mousePos - transform.position;
-            float rotZ = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg - 90f;
-            transform.rotation = Quaternion.Euler(0, 0, rotZ);
+            
 
             Instantiate(voidBullet, bulletTransform.position, bulletTransform.rotation);
         }
@@ -173,9 +208,6 @@ public class Shooting : MonoBehaviour
 
     private void ShootTwo(string colour){
         if (colour == "Holy"){
-            Vector3 rotation = mousePos - transform.position;
-            float rotZ = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg - 90f;
-            transform.rotation = Quaternion.Euler(0, 0, rotZ);
             float angle = 5f;
             for (int i = 0; i < 2; i++){
                 var shotRotation = transform.rotation;
@@ -185,9 +217,6 @@ public class Shooting : MonoBehaviour
             }
         }
         else{
-            Vector3 rotation = mousePos - transform.position;
-            float rotZ = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg - 90f;
-            transform.rotation = Quaternion.Euler(0, 0, rotZ);
             float angle = 5f;
             for (int i = 0; i < 2; i++){
                 var shotRotation = transform.rotation;
@@ -201,9 +230,6 @@ public class Shooting : MonoBehaviour
 
     private void ShootThree(string colour){
         if (colour == "Holy"){
-            Vector3 rotation = mousePos - transform.position;
-            float rotZ = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg - 90f;
-            transform.rotation = Quaternion.Euler(0, 0, rotZ);
             float angle = 10f;
             for (int i = 0; i < 3; i++){
                 var shotRotation = transform.rotation;
@@ -213,9 +239,6 @@ public class Shooting : MonoBehaviour
             }
         }
         else{
-            Vector3 rotation = mousePos - transform.position;
-            float rotZ = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg - 90f;
-            transform.rotation = Quaternion.Euler(0, 0, rotZ);
             float angle = 10f;
             for (int i = 0; i < 3; i++){
                 var shotRotation = transform.rotation;
@@ -229,9 +252,6 @@ public class Shooting : MonoBehaviour
 
     private void ShootFive(string colour){
         if (colour == "Holy"){
-            Vector3 rotation = mousePos - transform.position;
-            float rotZ = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg - 90f;
-            transform.rotation = Quaternion.Euler(0, 0, rotZ);
             float angle = 30f;
             for (int i = 0; i < 5; i++){
                 var shotRotation = transform.rotation;
@@ -241,9 +261,7 @@ public class Shooting : MonoBehaviour
             }
         }
         else{
-            Vector3 rotation = mousePos - transform.position;
-            float rotZ = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg - 90f;
-            transform.rotation = Quaternion.Euler(0, 0, rotZ);
+            
             float angle = 30f;
             for (int i = 0; i < 5; i++){
                 var shotRotation = transform.rotation;
@@ -256,9 +274,6 @@ public class Shooting : MonoBehaviour
 
     private void ShootSeven(string colour){
         if (colour == "Holy"){
-            Vector3 rotation = mousePos - transform.position;
-            float rotZ = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg - 90f;
-            transform.rotation = Quaternion.Euler(0, 0, rotZ);
             float angle = 33f;
             for (int i = 0; i < 7; i++){
                 var shotRotation = transform.rotation;
@@ -268,9 +283,6 @@ public class Shooting : MonoBehaviour
             }
         }
         else{
-            Vector3 rotation = mousePos - transform.position;
-            float rotZ = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg - 90f;
-            transform.rotation = Quaternion.Euler(0, 0, rotZ);
             float angle = 33f;
             for (int i = 0; i < 5; i++){
                 var shotRotation = transform.rotation;
@@ -284,9 +296,6 @@ public class Shooting : MonoBehaviour
     public void ShootAOEPulse(string colour){
         CinemachineShake.Instance.ShakeCamera(shakeIntensity, duration);
         if (colour == "Holy"){
-            Vector3 rotation = mousePos - transform.position;
-            float rotZ = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg - 90f;
-            transform.rotation = Quaternion.Euler(0, 0, rotZ);
             float angle = 30f;
             for (int i = 0; i < 12; i++){
                 var shotRotation = transform.rotation;
@@ -297,9 +306,6 @@ public class Shooting : MonoBehaviour
             }
         }
         else{
-            Vector3 rotation = mousePos - transform.position;
-            float rotZ = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg - 90f;
-            transform.rotation = Quaternion.Euler(0, 0, rotZ);
             float angle = 30f;
             for (int i = 0; i < 12; i++){
                 var shotRotation = transform.rotation;

@@ -10,6 +10,8 @@ TagManager:
   - VoidBlackHole
   - PowerUpTile
   - PowerUpTooltip
+  - DebugCrosshair
+  - Crosshair
   layers:
   - Default
   - TransparentFX

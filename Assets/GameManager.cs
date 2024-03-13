@@ -8,13 +8,17 @@ using TMPro;
 using System;
 using UnityEngine.UI;
 using DG.Tweening;
+using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance {get; private set;}
     public PlayerCrosshair playerCrosshair;
     public PlayerController playerController;
+    public EventSystem eventSystem;
     public SlimeSpawner[] slimeSpawners;
+    PlayerInputActions playerInputActions;
     public PowerUps powerUps;
     public Volume volume;
     public Canvas uiCanvas;
@@ -22,6 +26,9 @@ public class GameManager : MonoBehaviour
     public GameObject gameOverScreen;
     public GameObject gameWonScreen;
     public GameObject pauseScreen;
+    public GameObject gameOverScreenFirstButton;
+    public GameObject gameWonScreenFirstButton;
+    public GameObject pauseScreenFirstButton;
     public AudioSource BGM;
     public int arenaIndex = 0;
     public int yOffset = -1;
@@ -51,6 +58,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject shieldEffect;
     [SerializeField] private GameObject powerUpParent;
     [SerializeField] private TextMeshProUGUI healthText;
+    [SerializeField] private GameObject[] powerUpTiles;
     
 
     [Header("Player Stats")]
@@ -59,6 +67,7 @@ public class GameManager : MonoBehaviour
     public int numberOfDepositedHolyOrbs;
     public int numberOfDepositedVoidOrbs;
     public int playerHealth;
+    public bool dashUpgradeLevelAllowsNoDamage = false;
     private float numberOfOrbsToCollect = 1;
     private float bulletSpeed = 20;
     public bool invincible = false;
@@ -78,7 +87,12 @@ public class GameManager : MonoBehaviour
         else 
         { 
             Instance = this; 
-        } 
+        }
+        playerInputActions = new PlayerInputActions();
+        if (!playerInputActions.Player.enabled){
+            playerInputActions.Player.Enable();
+        }
+        playerInputActions.Player.Pause.performed += PauseGame;
     }
     // Start is called before the first frame update
     void Start()
@@ -133,9 +147,6 @@ public class GameManager : MonoBehaviour
             if (vigTimer >= vigTimerDuration){
                 KillPlayer();
             }
-            if (Input.GetKeyDown(KeyCode.Escape)){
-                PauseGame();
-            }
 
         }
         
@@ -161,17 +172,25 @@ public class GameManager : MonoBehaviour
     }
 
     public void UnpauseGame(){
-        BGM.Play();
-        isGamePlaying = true;
-        pauseScreen.SetActive(false);
-        playerCrosshair.ShowCrosshair();
+        if (!isGamePlaying){
+            BGM.Play();
+            isGamePlaying = true;
+            pauseScreen.SetActive(false);
+            playerCrosshair.ShowCrosshair();
+        }
+        
     }
 
-    private void PauseGame(){
-        isGamePlaying = false;
-        pauseScreen.SetActive(true);
-        BGM.Pause();
-        playerCrosshair.HideCrosshair();
+    private void PauseGame(InputAction.CallbackContext ctx){
+        if (isGamePlaying){
+            isGamePlaying = false;
+            pauseScreen.SetActive(true);
+            BGM.Pause();
+            playerCrosshair.HideCrosshair();
+            eventSystem.firstSelectedGameObject = pauseScreenFirstButton;
+            eventSystem.SetSelectedGameObject(pauseScreenFirstButton);
+        }
+        
     }
 
     public void KillPlayer(){
@@ -183,6 +202,8 @@ public class GameManager : MonoBehaviour
             foreach (GameObject go in GameObject.FindGameObjectsWithTag("Orb")){
                 Destroy(go);
             }
+            eventSystem.firstSelectedGameObject = gameOverScreenFirstButton;
+            eventSystem.SetSelectedGameObject(gameOverScreenFirstButton);
         }   
         
     }
@@ -190,10 +211,12 @@ public class GameManager : MonoBehaviour
     private void GameWon(){
         isGamePlaying = false;
         gameWonScreen.SetActive(true);
+        
         gameWonScreen.transform.Find("Title").GetComponent<TextMeshProUGUI>().text = "STAGE " + stage + " COMPLETE";
         stage++;
         //PlayerPrefs.SetInt("StageSaved", stage);
         //Debug.Log(powerUps.GeneratePowerUpsToBuy().Count);
+        int count = 0;
         foreach (string s in powerUps.GeneratePowerUpsToBuy()){
             string nameOfPowerUp = s.Split(" ")[0];
             string levelOfPowerUp;
@@ -204,7 +227,7 @@ public class GameManager : MonoBehaviour
             }
             
             //Debug.Log(nameOfPowerUp + levelOfPowerUp);
-            GameObject go = Instantiate(Resources.Load<GameObject>("PowerUps/PowerUpTile"), powerUpParent.transform);
+            GameObject go = powerUpTiles[count];
             go.GetComponent<Image>().sprite = Resources.Load<Sprite>("PowerUps/" + nameOfPowerUp);
             if (nameOfPowerUp == "fasterFireRate"){
                 nameOfPowerUp = "faster fire rate";
@@ -219,39 +242,69 @@ public class GameManager : MonoBehaviour
             if (levelOfPowerUp != ""){
                 go.transform.Find("LevelOfPowerUp").GetComponent<TextMeshProUGUI>().text = "Level " + levelOfPowerUp;
             }
+            count++;
             
             
         }
+        eventSystem.firstSelectedGameObject = gameWonScreenFirstButton;
+        eventSystem.SetSelectedGameObject(gameWonScreenFirstButton);
         playerCrosshair.HideCrosshair();
         
         BGM.Stop();
     }
 
     public void DecreasePlayerHealth(int damage){
-        if (isGamePlaying && !playerController.isDashing){
-            if (!invincible){
-                int calcHealth;
-                calcHealth = playerHealth;
-                playerHealth -= damage;
-                healthSlider.value = playerHealth;
-                
-                healthText.text = string.Format("{0}/{1}", playerHealth.ToString(), healthSlider.maxValue.ToString());
-                
-                for (int i = 0; i < damage; i++)
-                {
-                    calcHealth -= 1;
-                    if (shieldHealthPercentages.Contains(((int)((calcHealth / healthSlider.maxValue) * 100)))){
-                        invincible = true;
-                        break;
+        if (dashUpgradeLevelAllowsNoDamage){
+            if (isGamePlaying && !playerController.isDashing){
+                if (!invincible){
+                    int calcHealth;
+                    calcHealth = playerHealth;
+                    playerHealth -= damage;
+                    healthSlider.value = playerHealth;
+                    
+                    healthText.text = string.Format("{0}/{1}", playerHealth.ToString(), healthSlider.maxValue.ToString());
+                    
+                    for (int i = 0; i < damage; i++)
+                    {
+                        calcHealth -= 1;
+                        if (shieldHealthPercentages.Contains(((int)((calcHealth / healthSlider.maxValue) * 100)))){
+                            invincible = true;
+                            break;
+                        }
+                    }
+                    if (playerHealth <= 0){
+                        KillPlayer();
                     }
                 }
-                if (playerHealth <= 0){
-                    KillPlayer();
+                
+                
+            }
+        }
+        else{
+            if (isGamePlaying){
+                if (!invincible){
+                    int calcHealth;
+                    calcHealth = playerHealth;
+                    playerHealth -= damage;
+                    healthSlider.value = playerHealth;
+                    
+                    healthText.text = string.Format("{0}/{1}", playerHealth.ToString(), healthSlider.maxValue.ToString());
+                    
+                    for (int i = 0; i < damage; i++)
+                    {
+                        calcHealth -= 1;
+                        if (shieldHealthPercentages.Contains(((int)((calcHealth / healthSlider.maxValue) * 100)))){
+                            invincible = true;
+                            break;
+                        }
+                    }
+                    if (playerHealth <= 0){
+                        KillPlayer();
+                    }
                 }
             }
-            
-            
         }
+        
     }
 
     public void IncreasePlayerHealth(int healAmount){
@@ -272,7 +325,7 @@ public class GameManager : MonoBehaviour
         numberOfDepositedHolyOrbs = 0;
         numberOfDepositedVoidOrbs = 0;
         foreach (GameObject go in GameObject.FindGameObjectsWithTag("PowerUpTile")){
-            Destroy(go);
+            //Destroy(go);
         }
         playerHealth = (int)healthSlider.maxValue;
         healthSlider.value = playerHealth;
@@ -322,7 +375,7 @@ public class GameManager : MonoBehaviour
         numberOfDepositedHolyOrbs = 0;
         numberOfDepositedVoidOrbs = 0;
         foreach (GameObject go in GameObject.FindGameObjectsWithTag("PowerUpTile")){
-            Destroy(go);
+            //Destroy(go);
         }
         IncreaseDifficulty();
         

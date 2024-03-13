@@ -6,8 +6,8 @@ using UnityEngine.UI;
 public class ColourPicker : MonoBehaviour
 {
     [SerializeField] RectTransform texture;
-    [SerializeField] GameObject crosshair;
     [SerializeField] Texture2D refSprite;
+    [SerializeField] SimpleCrosshair crosshair;
 
     private void Start() {
         if (PlayerPrefs.HasKey("CrosshairR")){
@@ -37,7 +37,8 @@ public class ColourPicker : MonoBehaviour
     }
 
     void SetActualColour(Color c){
-        crosshair.GetComponent<Image>().color = c;
+        crosshair.SetColor(c, true);
+        //crosshair.GetComponent<Image>().color = c;
         //set the playerprefs here aswell
         PlayerPrefs.SetFloat("CrosshairR", c.r);
         PlayerPrefs.SetFloat("CrosshairG", c.g);

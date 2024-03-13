@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
+using DG.Tweening;
+using UnityEngine.EventSystems;
 
 public class HoverButton : MonoBehaviour
 {
@@ -12,7 +14,12 @@ public class HoverButton : MonoBehaviour
 
     public GameObject settingsCanvas;
     public GameObject mainMenuCanvas;
+    public GameObject mainMenuFirstButton;
+    public GameObject settingsMenuFirstButton;
     public GameObject patchNotes;
+    public CanvasGroup cg;
+    public SimpleCrosshair crosshair;
+    public EventSystem eventSystem;
     
     public void Hovering(){
         text.color = highlightColour;
@@ -20,6 +27,26 @@ public class HoverButton : MonoBehaviour
 
     public void NotHovering(){
         text.color = startColour;
+    }
+
+    public void VoidButtonsHover(){
+        DOVirtual.Float(0, 1, 0.2f, v => {
+            cg.alpha = v;
+        });
+    }
+
+    public void DuplicateCrosshair(){
+        GameObject go = Instantiate(crosshair.gameObject);
+        go.GetComponent<SimpleCrosshair>().GenerateCrosshair();
+        go.name = "Crosshair";
+        go.tag = "Crosshair";
+        Debug.Log(go.name);
+    }
+
+    public void VoidButtonsUnHover(){
+        DOVirtual.Float(1, 0, 0.2f, v => {
+            cg.alpha = v;
+        });
     }
 
     public void LoadScene(string name){
@@ -41,12 +68,16 @@ public class HoverButton : MonoBehaviour
     public void ShowMainMenuCanvas(){
         mainMenuCanvas.SetActive(true);
         settingsCanvas.SetActive(false);
+        NotHovering();
+        eventSystem.SetSelectedGameObject(mainMenuFirstButton);
     }
 
     public void ShowSettingsCanvas(){
         settingsCanvas.SetActive(true);
         mainMenuCanvas.SetActive(false);
-        
+        NotHovering();
+        VoidButtonsUnHover();
+        eventSystem.SetSelectedGameObject(settingsMenuFirstButton);
     }
 
     public void PatchNotes(){

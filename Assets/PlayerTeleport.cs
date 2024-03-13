@@ -4,6 +4,7 @@ using UnityEngine;
 using Cinemachine;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.Rendering;
+using UnityEngine.InputSystem;
 
 public class PlayerTeleport : MonoBehaviour
 {
@@ -17,11 +18,61 @@ public class PlayerTeleport : MonoBehaviour
     public Animator holyVortexAnim;
     public Animator voidVortexAnim;
     [SerializeField] private GameObject tpTooltip;
+    public PlayerInputActions playerInputActions;
     float timerToDamp = 0;
     float dampDuration = 0.2f;
     private void Start() {
         volume.profile.TryGet(out ld);
         volume.profile.TryGet(out ca);
+        playerInputActions = new PlayerInputActions();
+        if (!playerInputActions.Player.enabled){
+            playerInputActions.Player.Enable();
+        }
+    }
+
+    public void TeleportPlayer(InputAction.CallbackContext ctx){
+        if (GameManager.Instance.isGamePlaying && ctx.performed){
+            if (tr.emitting){
+                tr.emitting = false;
+            }
+            timerToDamp += Time.deltaTime;
+            foreach (GameObject go in GameObject.FindGameObjectsWithTag("Orb")){
+                Destroy(go);
+            }
+            ps1.Play();
+            ps2.Play();
+            GameManager.Instance.vigTimer = 0;
+            
+            if (GameManager.Instance.shouldSpawnHoly){
+                transform.position = new Vector2(transform.position.x + 80, transform.position.y);
+                voidVortexAnim.Play("Void_Vortex", 0, 0f);
+                SoundEffects.Instance.PlaySound("woosh1");
+                if (GameManager.Instance.holyEnemies.Count > 0){
+                    foreach(GameObject go in GameManager.Instance.holyEnemies){
+                        Destroy(go);
+                    }
+                    GameManager.Instance.holyEnemies.Clear();
+                }
+                GameManager.Instance.shouldSpawnHoly = false;
+                if (tpTooltip != null){
+                    Destroy(tpTooltip);
+                }
+            }
+            else{
+                transform.position = new Vector2(transform.position.x - 80, transform.position.y);
+                holyVortexAnim.Play("Holy_Vortex", 0, 0f);
+                SoundEffects.Instance.PlaySound("woosh2");
+                if (GameManager.Instance.voidEnemies.Count > 0){
+                    foreach(GameObject go in GameManager.Instance.voidEnemies){
+                        Destroy(go);
+                    }
+                    GameManager.Instance.voidEnemies.Clear();
+                }
+                GameManager.Instance.shouldSpawnHoly = true;
+            }
+                
+            
+        }
     }
     // Update is called once per frame
     void Update()
@@ -40,49 +91,7 @@ public class PlayerTeleport : MonoBehaviour
                 timerToDamp = 0;
             }
         }
-        if (GameManager.Instance.isGamePlaying){
-            if (Input.GetKeyDown(KeyCode.F)){
-                if (tr.emitting){
-                    tr.emitting = false;
-                }
-                timerToDamp += Time.deltaTime;
-                foreach (GameObject go in GameObject.FindGameObjectsWithTag("Orb")){
-                    Destroy(go);
-                }
-                ps1.Play();
-                ps2.Play();
-                GameManager.Instance.vigTimer = 0;
-                
-                if (GameManager.Instance.shouldSpawnHoly){
-                    transform.position = new Vector2(transform.position.x + 80, transform.position.y);
-                    voidVortexAnim.Play("Void_Vortex", 0, 0f);
-                    SoundEffects.Instance.PlaySound("woosh1");
-                    if (GameManager.Instance.holyEnemies.Count > 0){
-                        foreach(GameObject go in GameManager.Instance.holyEnemies){
-                            Destroy(go);
-                        }
-                        GameManager.Instance.holyEnemies.Clear();
-                    }
-                    GameManager.Instance.shouldSpawnHoly = false;
-                    if (tpTooltip != null){
-                        Destroy(tpTooltip);
-                    }
-                }
-                else{
-                    transform.position = new Vector2(transform.position.x - 80, transform.position.y);
-                    holyVortexAnim.Play("Holy_Vortex", 0, 0f);
-                    SoundEffects.Instance.PlaySound("woosh2");
-                    if (GameManager.Instance.voidEnemies.Count > 0){
-                        foreach(GameObject go in GameManager.Instance.voidEnemies){
-                            Destroy(go);
-                        }
-                        GameManager.Instance.voidEnemies.Clear();
-                    }
-                    GameManager.Instance.shouldSpawnHoly = true;
-                }
-                
-            }
-        }
+        
         
     }
 }
