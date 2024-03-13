@@ -197,6 +197,7 @@ public class GameManager : MonoBehaviour
         if (isGamePlaying){
             isGamePlaying = false;
             gameOverScreen.SetActive(true);
+            gameOverScreen.transform.Find("TitleStages").GetComponent<TextMeshProUGUI>().text = string.Format("YOU SURVIVED {0} STAGES.", stage);
             BGM.Stop();
             playerCrosshair.HideCrosshair();
             foreach (GameObject go in GameObject.FindGameObjectsWithTag("Orb")){
@@ -333,6 +334,7 @@ public class GameManager : MonoBehaviour
         gameOverScreen.SetActive(false);
         gameWonScreen.SetActive(false);
         vigTimer = 0;
+        stage = 0;
         slimeSpawners[arenaIndex].spawnerIsActive = false;
         arenaIndex = UnityEngine.Random.Range(0, amountOfArenas);
         slimeSpawners[arenaIndex].spawnerIsActive = true;
