@@ -58,7 +58,7 @@ public class SimpleCrosshair : MonoBehaviour
 
     private void Start() {
         if (gameObject.name == "Crosshair"){
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
         }
     }
 

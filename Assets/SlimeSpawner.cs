@@ -15,7 +15,7 @@ public class SlimeSpawner : MonoBehaviour
     private float slimeRotateAimSpeed = 1; //1
     private float randomMinHealth = 1;
     private float randomMaxHealth = 3;
-    private int chanceForBigSlime = 100;
+    private int chanceForBigSlime = 0;
     private int stageForBigSlime = 1;
 
     private void Update() {

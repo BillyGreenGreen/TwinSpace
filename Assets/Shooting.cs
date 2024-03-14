@@ -45,7 +45,7 @@ public class Shooting : MonoBehaviour
     {
         //Debug.Log(playerInputActions.Player.Aim.ReadValue<Vector2>());
         if (GameManager.Instance.isGamePlaying){
-            Debug.Log(playerInput.currentControlScheme);
+            //Debug.Log(playerInput.currentControlScheme);
             var pos = playerInputActions.Player.Aim.ReadValue<Vector2>();
             if (playerInput.currentControlScheme == "Keyboard"){
                 //enable mouse crosshair
