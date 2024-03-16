@@ -22,8 +22,7 @@ public class PlayerTeleport : MonoBehaviour
     float timerToDamp = 0;
     float dampDuration = 0.2f;
     private void Start() {
-        volume.profile.TryGet(out ld);
-        volume.profile.TryGet(out ca);
+        
         playerInputActions = new PlayerInputActions();
         if (!playerInputActions.Player.enabled){
             playerInputActions.Player.Enable();
@@ -81,6 +80,8 @@ public class PlayerTeleport : MonoBehaviour
         if (timerToDamp > 0){
             timerToDamp += Time.deltaTime;
             if (timerToDamp < dampDuration){
+                volume.profile.TryGet(out ld);
+                volume.profile.TryGet(out ca);
                 ld.intensity.value = Mathf.Lerp(-1, 0, timerToDamp / dampDuration);
                 ca.intensity.value = Mathf.Lerp(1, 0, timerToDamp / dampDuration);
             }

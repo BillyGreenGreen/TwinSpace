@@ -84,6 +84,17 @@
                     "isPartOfComposite": false
                 },
                 {
+                    "name": "",
+                    "id": "9126d017-96b5-4156-9953-f05670323458",
+                    "path": "<Gamepad>/leftShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Teleport",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
                     "name": "2D Vector",
                     "id": "5dc73ac0-baa2-40dd-9e21-6e9420742a4e",
                     "path": "2DVector",
@@ -164,6 +175,17 @@
                     "name": "",
                     "id": "40fe97f9-fdb3-4763-bca5-587fc44f762e",
                     "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Dash",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4e0ea438-9d0b-46c8-a922-2b27cd0a201c",
+                    "path": "<Gamepad>/leftTrigger",
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",

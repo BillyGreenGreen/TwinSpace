@@ -66,10 +66,8 @@ public class SimpleCrosshair : MonoBehaviour
         if (SceneManager.GetActiveScene().name == "SampleScene"){
             if (findParent){
                 transform.SetParent(GameObject.Find("CrosshairCanvas").transform);
-                if (GameObject.FindGameObjectWithTag("DebugCrosshair") != null && gameObject.CompareTag("Crosshair")){
-                    Destroy(GameObject.FindGameObjectWithTag("DebugCrosshair"));
-                    gameObject.transform.localScale = new Vector3(1,1,1);
-                }
+                m_crosshair.color = new Color(PlayerPrefs.GetInt("CrosshairR"), PlayerPrefs.GetInt("CrosshairG"), PlayerPrefs.GetInt("CrosshairB"));
+                GenerateCrosshair();
                 findParent = false;
             }
             FollowMouse();
@@ -80,6 +78,7 @@ public class SimpleCrosshair : MonoBehaviour
     void FollowMouse(){
         var pos = Input.mousePosition;
         pos.z = 1;
+        //transform.position = Camera.main.ScreenToWorldPoint(pos);
         transform.position = Camera.main.ScreenToWorldPoint(pos);
         //gameObject.transform.position = Camera.main.ViewportToScreenPoint(Input.mousePosition);
     }

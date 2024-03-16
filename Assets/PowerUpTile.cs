@@ -135,6 +135,9 @@ public class PowerUpTile : MonoBehaviour
                 case "2":
                     upgradeText = "5";
                     break;
+                case "3":
+                    upgradeText = "7";
+                    break;
             }
             description.text = string.Format("Fire <#FFAF0B>{0} <#FFFFFF>shots every time you fire.", upgradeText);
         }

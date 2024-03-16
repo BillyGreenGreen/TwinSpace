@@ -12,6 +12,7 @@ TagManager:
   - PowerUpTooltip
   - DebugCrosshair
   - Crosshair
+  - Chest
   layers:
   - Default
   - TransparentFX

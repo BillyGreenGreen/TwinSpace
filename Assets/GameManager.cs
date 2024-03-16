@@ -16,11 +16,17 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance {get; private set;}
     public PlayerCrosshair playerCrosshair;
     public PlayerController playerController;
+    public Volume volume;
+    public VolumeProfile defaultVolumeProfile;
+    public VolumeProfile stormVolumeProfile;
+    [SerializeField] private GameObject stormFlashes;
+    [SerializeField] private GameObject rain;
+    [SerializeField] private Light2D defaultLight;
+    [SerializeField] private Light2D stormLight;
     public EventSystem eventSystem;
     public SlimeSpawner[] slimeSpawners;
     PlayerInputActions playerInputActions;
     public PowerUps powerUps;
-    public Volume volume;
     public Canvas uiCanvas;
     public bool isGamePlaying = false;
     public GameObject gameOverScreen;
@@ -68,7 +74,7 @@ public class GameManager : MonoBehaviour
     public int numberOfDepositedVoidOrbs;
     public int playerHealth;
     public bool dashUpgradeLevelAllowsNoDamage = false;
-    private float numberOfOrbsToCollect = 1;
+    private float numberOfOrbsToCollect = 5;
     private float bulletSpeed = 20;
     public bool invincible = false;
     private float invincibleTimer;
@@ -197,7 +203,14 @@ public class GameManager : MonoBehaviour
         if (isGamePlaying){
             isGamePlaying = false;
             gameOverScreen.SetActive(true);
-            gameOverScreen.transform.Find("TitleStages").GetComponent<TextMeshProUGUI>().text = string.Format("YOU SURVIVED {0} STAGES.", stage);
+            string stagesPlural;
+            if (stage == 1){
+                stagesPlural = "STAGE";
+            }
+            else{
+                stagesPlural = "STAGES";
+            }
+            gameOverScreen.transform.Find("TitleStages").GetComponent<TextMeshProUGUI>().text = string.Format("YOU SURVIVED {0} {1}.", stage, stagesPlural);
             BGM.Stop();
             playerCrosshair.HideCrosshair();
             foreach (GameObject go in GameObject.FindGameObjectsWithTag("Orb")){
@@ -317,8 +330,26 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    void ChangeSceneProfile(int _arenaIndex){
+        if (_arenaIndex == 2){
+            volume.profile = stormVolumeProfile;
+            stormFlashes.SetActive(true);
+            rain.SetActive(true);
+            defaultLight.gameObject.SetActive(false);
+            stormLight.gameObject.SetActive(true);
+        }
+        else{
+            volume.profile = defaultVolumeProfile;
+            stormFlashes.SetActive(false);
+            rain.SetActive(false);
+            stormLight.gameObject.SetActive(false);
+            defaultLight.gameObject.SetActive(true);
+        }
+    }
+
     public void ResetGame(){
         playerCrosshair.ShowCrosshair();
+        ResetDifficulty();
         numberOfHolyOrbs = 0;
         numberOfVoidOrbs = 0;
         holyOrbText.text = numberOfHolyOrbs.ToString();
@@ -338,13 +369,16 @@ public class GameManager : MonoBehaviour
         slimeSpawners[arenaIndex].spawnerIsActive = false;
         arenaIndex = UnityEngine.Random.Range(0, amountOfArenas);
         slimeSpawners[arenaIndex].spawnerIsActive = true;
+        //ChangeSceneProfile(arenaIndex);
         holyDepositText[arenaIndex].text = "0/" + Math.Truncate(numberOfOrbsToCollect).ToString();
         voidDepositText[arenaIndex].text = "0/" + Math.Truncate(numberOfOrbsToCollect).ToString();
         yOffset = -((arenaIndex * 100) + 1); //if 2 => -201
         playerController.gameObject.transform.position = new Vector3(0, yOffset, 0);
         //GameObject.Find("Player").transform.position = new Vector3(0, -1f, 0);
 
-
+        foreach (GameObject chest in GameObject.FindGameObjectsWithTag("Chest")){
+            chest.GetComponent<Chest>().ResetChest();
+        }
         if (shouldSpawnHoly){
             foreach(GameObject go in holyEnemies){
                 Destroy(go);
@@ -356,6 +390,11 @@ public class GameManager : MonoBehaviour
                 Destroy(go);
             }
             voidEnemies.Clear();
+        }
+        foreach (GameObject orb in GameObject.FindGameObjectsWithTag("Orb")){
+            if (orb.layer != 12){
+                Destroy(orb);
+            }  
         }
         if (GameObject.Find("Holy_Big_Slime(Clone)") != null){
             Destroy(GameObject.Find("Holy_Big_Slime(Clone)"));
@@ -388,7 +427,13 @@ public class GameManager : MonoBehaviour
         //new arena
         slimeSpawners[arenaIndex].spawnerIsActive = false;
         arenaIndex = UnityEngine.Random.Range(0, amountOfArenas);
+        Debug.Log(arenaIndex);
         slimeSpawners[arenaIndex].spawnerIsActive = true;
+        //ChangeSceneProfile(arenaIndex);
+
+        foreach (GameObject orb in GameObject.FindGameObjectsWithTag("Orb")){
+            Destroy(orb);
+        }
 
         holyDepositText[arenaIndex].text = "0/" + Math.Truncate(numberOfOrbsToCollect).ToString();
         voidDepositText[arenaIndex].text = "0/" + Math.Truncate(numberOfOrbsToCollect).ToString();
@@ -417,9 +462,15 @@ public class GameManager : MonoBehaviour
     }
 
     private void IncreaseDifficulty(){
-        //numberOfOrbsToCollect += 1f;
+        numberOfOrbsToCollect += 1f;
         slimeSpawners[arenaIndex].IncreaseSlimeDifficulty();
+    }
 
+    private void ResetDifficulty(){
+        numberOfOrbsToCollect = 5;
+        foreach (SlimeSpawner spawner in slimeSpawners){
+            spawner.ResetSlimeDifficulty();
+        }
     }
 
     public void IncreaseOrbCount(string colour){

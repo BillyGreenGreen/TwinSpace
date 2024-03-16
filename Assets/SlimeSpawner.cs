@@ -14,9 +14,9 @@ public class SlimeSpawner : MonoBehaviour
     private float slimeMoveSpeed = 4; //4
     private float slimeRotateAimSpeed = 1; //1
     private float randomMinHealth = 1;
-    private float randomMaxHealth = 3;
-    private int chanceForBigSlime = 0;
-    private int stageForBigSlime = 1;
+    private float randomMaxHealth = 2;
+    private int chanceForBigSlime = 1;
+    private int stageForBigSlime = 3;
 
     private void Update() {
         if (GameManager.Instance.isGamePlaying && spawnerIsActive){
@@ -71,6 +71,16 @@ public class SlimeSpawner : MonoBehaviour
         slimeMoveSpeed += 0.1f; //6 with wave 20
         slimeRotateAimSpeed += 0.45f; //10 with wave 20
         randomMinHealth += 0.3f; //7 with wave 20
-        randomMaxHealth += 0.35f; //10 with wave 20
+        randomMaxHealth += 0.4f; //10 with wave 20
+        chanceForBigSlime += 1;
+    }
+
+    public void ResetSlimeDifficulty(){
+        slimeFireRate = 1f; //1
+        slimeMoveSpeed = 4; //4
+        slimeRotateAimSpeed = 1; //1
+        randomMinHealth = 1;
+        randomMaxHealth = 2;
+        chanceForBigSlime = 5;
     }
 }

@@ -77,7 +77,7 @@ public class HoverButton : MonoBehaviour
         mainMenuCanvas.SetActive(false);
         NotHovering();
         VoidButtonsUnHover();
-        eventSystem.SetSelectedGameObject(settingsMenuFirstButton);
+        //eventSystem.SetSelectedGameObject(settingsMenuFirstButton);
     }
 
     public void PatchNotes(){
