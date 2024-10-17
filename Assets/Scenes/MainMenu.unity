@@ -10524,7 +10524,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 82aaa9ccdeac2e3438f2aa4943704436, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.331
+  m_Volume: 0.31
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -11599,7 +11599,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 7.0870056, y: -0.00030517578}
-  m_SizeDelta: {x: -14.1741, y: -8.802307}
+  m_SizeDelta: {x: -14.1741, y: 95.397705}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1872573313
 MonoBehaviour:
@@ -11645,8 +11645,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "<size=80%><u>added features</u>\n<size=60%>\u2022 Slimes now get harder
     over each stage you complete.\n\u2022 Added a new big slime enemy that has a
-    chance to appear after stage 3.\n\u2022 2 new arenas.\n\u2022 New slime AI path
-    detection (needs tweaking).\n\u2022 new crosshair customisation options.\n\u2022
+    chance to appear after stage 3.\n\u2022 \"Cave\" arena added.\n\u2022 New slime
+    AI path detection (needs tweaking).\n\u2022 new crosshair customisation options.\n\u2022
     basic gamepad support.\n\n<size=80%><u>reworked features</u>\n<size=60%>\u2022
     dash now only make you invulnerable past upgrade level 3.\n\u2022 some upgrades
     can now go up to level 10.\n\u2022 removed healing on orb deposit, new healing
@@ -11655,7 +11655,8 @@ MonoBehaviour:
     being active on the next run.\n\n<size=80%><u>Known Bugs</u>\n<size=60%>\u2022
     Bullets can go through enemies sometimes while moving, a fix is known but it
     will ruin gameplay so need to find a workaround.\n\u2022 Gamepad navigation wont
-    resume after using the mouse on the main menu."
+    resume after using the mouse on the main menu.\n\u2022 Crosshair may not save
+    properly and you will have the default crosshair."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9becc6bba000e854a81e556ba49f4fb7, type: 2}
   m_sharedMaterial: {fileID: 5790731199500433801, guid: 9becc6bba000e854a81e556ba49f4fb7, type: 2}
